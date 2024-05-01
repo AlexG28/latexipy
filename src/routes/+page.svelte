@@ -14,12 +14,15 @@
 
 
 <script>
+
+    import { convert } from './converts'
+
     let leftText = '';
     let rightText = '';
 
     function convertText() {
         console.log('Converted text:', leftText);
-        rightText = leftText
+        rightText = convert(leftText)
     }
 </script>
 
