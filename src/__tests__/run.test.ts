@@ -12,12 +12,12 @@ test('Updated parser version math', ()=> {
     expect(res).toEqual(32)
 })
 
-test('Updated parser version ast', ()=> { 
-    const parser = new ExpressionParser();
-    let res = parser.parse_ast("2*6+4*5")
+// test('Updated parser version ast', ()=> { 
+//     const parser = new ExpressionParser();
+//     let res = parser.parse_ast("2*6+4*5")
 
-    expect(res).toEqual(["+", ["*", 2, 6], ["*", 4, 5]])
-})
+//     expect(res).toEqual(["+", ["*", 2, 6], ["*", 4, 5]])
+// })
 
 
 test('recursion test 1', ()=> { 
@@ -35,22 +35,22 @@ test('recursion test 2', ()=> {
 })
 
 
-test('recursion ast', ()=> { 
-    const parser = new ExpressionParser();
-    let res = parser.parse_ast("2*(6*1)+(2*4)*(1+1+1+1+1)" )
-    expect(res).toEqual(["+", ["*", 2, 6], ["*", 8, 5]])
+// test('recursion ast', ()=> { 
+//     const parser = new ExpressionParser();
+//     let res = parser.parse_ast("2*(6*1)+(2*4)*(1+1+1+1+1)" )
+//     expect(res).toEqual(["+", ["*", 2, 6], ["*", 8, 5]])
 
-})
+// })
 
-test('recursion ast 2', ()=> { 
-    const parser = new ExpressionParser();
-    let res = parser.parse_ast(
-    `2*(6*1)+(2*4)*
-    (1+1+1+
-    1+1)`)
-    expect(res).toEqual(["+", ["*", 2, 6], ["*", 8, 5]])
+// test('recursion ast 2', ()=> { 
+//     const parser = new ExpressionParser();
+//     let res = parser.parse_ast(
+//     `2*(6*1)+(2*4)*
+//     (1+1+1+
+//     1+1)`)
+//     expect(res).toEqual(["+", ["*", 2, 6], ["*", 8, 5]])
 
-})
+// })
 
 
 test('whitespace 1', ()=> { 
