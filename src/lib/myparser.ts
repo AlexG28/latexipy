@@ -8,7 +8,6 @@ export class Token {
     }
 }
 
-
 export class ASTNode {
     type: string;
 
@@ -41,6 +40,17 @@ export class FunctionCall extends ASTNode {
     }
 }
 
+export class Assignment extends ASTNode {
+    variableName: string; 
+    value: number; // expression
+
+    constructor(name: string, value: number) {
+        super('Assignment');
+        this.variableName = name;
+        this.value = value;
+    }
+}
+
 export class Lexer {
     text: string;
     pos: number;
@@ -62,13 +72,6 @@ export class Lexer {
     }
 
     skipWhitespace() {
-        // while (
-        //     this.currentChar !== null && 
-        //     /\s/.test(this.currentChar as string)
-        // ) {
-        //     this.advance();
-        // }
-
         while(this.currentChar === ' '){
             this.advance();
         }
@@ -208,22 +211,7 @@ export class Parser{
         }
     }
 
-    
-
-
     beginFucntion(): FunctionCall{
-        /*  
-        def hello(): 
-            print("hi")
-
-        */
-        // identifier
-        // open bracket 
-        // multiple identifiers separated by ','
-        // close bracket
-        // ':' 
-        // statement 
-
         let args: string[] = [];
         let functionName: string = "";
 
@@ -249,5 +237,22 @@ export class Parser{
         this.consumeToken("COLON")
 
         return new FunctionCall(functionName, args);
+    }
+
+
+    assignment(): Assignment{
+        let variableName: string = "";
+        let value: number; // expression
+
+        variableName = String(this.currentToken.value);
+        this.consumeToken("ID");
+        
+        this.consumeToken("ASSIGN");
+        
+        
+        value = Number(this.currentToken.value);
+        this.consumeToken("INTEGER");
+
+        return new Assignment(variableName, value);
     }
 }
