@@ -1,4 +1,5 @@
-import { BinOpNode, ASTNode, Token, NumNode, Lexer, Parser, FunctionCall, Assignment } from "$lib/myparser";
+import { BinOpNode, ASTNode, Token, NumNode, FunctionCall, Assignment } from "$lib/nodes";
+import { Lexer, Parser } from "$lib/myparser";
 
 import { expect, test } from 'vitest'
 
@@ -61,7 +62,6 @@ test('test function with an integer assignment', ()=> {
     const parser = new Parser(lexer);
     const result: FunctionCall = parser.beginFunction();
 
-    console.log(result)
     const expected = new FunctionCall('functionName', [], [new Assignment("varName", new NumNode(14))]);
 
     expect(result).toEqual(expected);
