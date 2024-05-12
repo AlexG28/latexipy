@@ -258,10 +258,16 @@ export class Parser{
     }
 
     term(): ASTNode {
-        let node = this.factor(); // this is the current object being worked on
+        let node = this.factor();
 
-        // this is where we would handle binary operators
-        while (['MULTIPLY', 'DIVIDE', 'PLUS', 'MINUS'].includes(this.currentToken.type)) {
+        while ([
+            'MULTIPLY', 
+            'DIVIDE', 
+            'PLUS', 
+            'MINUS', 
+            'GREATERTHAN', 
+            'LESSTHAN'
+        ].includes(this.currentToken.type)) {
             const token = this.currentToken;
             this.consumeToken(this.currentToken.type);
             node = new BinOpNode(node, token, this.factor());

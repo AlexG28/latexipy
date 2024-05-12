@@ -157,3 +157,24 @@ test('test expressions 2', ()=> {
 
     expect(result).toEqual(expected);
 })
+
+test('test boolean expression', ()=> {
+    const inputText = `anotherVar = 19 > 4`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result: Assignment = parser.assignment();
+
+    const anotherVar = new Variable("anotherVar");
+
+    const expected = new Assignment(
+        anotherVar,
+        new BinOpNode(
+            new NumNode(19),
+            new Token('GREATERTHAN', '>'),
+            new NumNode(4),
+        )
+    )
+
+    expect(result).toEqual(expected);
+})
