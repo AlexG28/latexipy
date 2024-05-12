@@ -1,5 +1,3 @@
-import { error } from "@sveltejs/kit";
-
 export class Token {
     type: string;
     value: string | number;
@@ -31,6 +29,15 @@ export class BinOpNode extends ASTNode {
     }
 }
 
+export class NumNode extends ASTNode {
+    value: number;
+
+    constructor(value: number) {
+        super('Num');
+        this.value = value;
+    }
+}
+
 export class FunctionCall extends ASTNode {
     name: string; 
     arguments: string[];
@@ -46,9 +53,9 @@ export class FunctionCall extends ASTNode {
 
 export class Assignment extends ASTNode {
     variableName: string; 
-    value: number; // expression
+    value: ASTNode; // expression
 
-    constructor(name: string, value: number) {
+    constructor(name: string, value: ASTNode) {
         super('Assignment');
         this.variableName = name;
         this.value = value;
@@ -223,7 +230,7 @@ export class Parser{
         }
     }
 
-    beginFucntion(): FunctionCall{
+    beginFunction(): FunctionCall{
         let args: string[] = [];
         let functionName: string = "";
         let statement: ASTNode[] = [];
@@ -274,11 +281,9 @@ export class Parser{
                 default: { 
                    //statements; 
                    throw new Error('Somethings wrong');
-                   break; 
                 } 
             } 
         }
-
 
         return new FunctionCall(functionName, args, statement);
     }
@@ -286,17 +291,49 @@ export class Parser{
 
     assignment(): Assignment{
         let variableName: string = "";
-        let value: number; // expression
+        let value: ASTNode;
 
         variableName = String(this.currentToken.value);
         this.consumeToken("ID");
         
         this.consumeToken("ASSIGN");
-        
-        
-        value = Number(this.currentToken.value);
-        this.consumeToken("INTEGER");
+                
+        value = this.expression();
 
         return new Assignment(variableName, value);
     }
+
+    expression(): ASTNode{
+        let node = this.term();
+
+        return node;
+    }
+
+    term(): ASTNode {
+        let node = this.factor(); // this is the current object being worked on
+
+        // this is where we would handle binary operators
+
+        return node;
+    }
+
+    factor() {
+        const currentToken = this.currentToken;
+
+        if (currentToken.type == "INTEGER"){
+            const returnVal = new NumNode(Number(currentToken.value))
+            this.consumeToken("INTEGER");
+            return returnVal;
+        } else if (currentToken.type == "LPAREN") {
+            this.consumeToken("LPAREN");
+            const result = this.expression();
+            this.consumeToken("RPAREN");
+            return result;
+        } else if (currentToken.type == "ID") {
+            return this.assignment();
+        } else {
+            throw new Error("Invalid syntax")
+        }
+    }
+
 }

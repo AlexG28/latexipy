@@ -1,4 +1,4 @@
-import { BinOpNode, ASTNode, Token, Lexer, Parser, FunctionCall, Assignment } from "$lib/myparser";
+import { BinOpNode, ASTNode, Token, NumNode, Lexer, Parser, FunctionCall, Assignment } from "$lib/myparser";
 
 import { expect, test } from 'vitest'
 
@@ -7,7 +7,7 @@ test('test function declaration with no arguments', ()=> {
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: FunctionCall = parser.beginFucntion();
+    const result: FunctionCall = parser.beginFunction();
 
     const expected: FunctionCall = new FunctionCall('functionName', [], []);
 
@@ -19,7 +19,7 @@ test('test function declaration with one argument', ()=> {
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: FunctionCall = parser.beginFucntion();
+    const result: FunctionCall = parser.beginFunction();
 
     const expected: FunctionCall = new FunctionCall('functionName', ["arg1"], []);
 
@@ -31,7 +31,7 @@ test('test function declaration with multiple arguments', ()=> {
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: FunctionCall = parser.beginFucntion();
+    const result: FunctionCall = parser.beginFunction();
 
     const expected = new FunctionCall('functionName', ["arg1", "anotherArg", "arg3"], []);
 
@@ -46,7 +46,7 @@ test('test integer variable assignment', ()=> {
     const parser = new Parser(lexer);
     const result: Assignment = parser.assignment();
 
-    const expected = new Assignment("varName", 14);
+    const expected = new Assignment("varName", new NumNode(14));
 
     expect(result).toEqual(expected);
 })
@@ -59,10 +59,10 @@ test('test function with an integer assignment', ()=> {
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: FunctionCall = parser.beginFucntion();
+    const result: FunctionCall = parser.beginFunction();
 
     console.log(result)
-    const expected = new FunctionCall('functionName', [], [new Assignment("varName", 14)]);
+    const expected = new FunctionCall('functionName', [], [new Assignment("varName", new NumNode(14))]);
 
     expect(result).toEqual(expected);
 })
@@ -74,9 +74,16 @@ test('test function with multiple integer assignments', ()=> {
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: FunctionCall = parser.beginFucntion();
+    const result: FunctionCall = parser.beginFunction();
 
-    const expected = new FunctionCall('functionName', [], [new Assignment("varName", 14), new Assignment("anotherVar", 6969)]);
+    const expected = new FunctionCall(
+        'functionName', 
+        [], 
+        [
+            new Assignment("varName", new NumNode(14)), 
+            new Assignment("anotherVar", new NumNode(6969))
+        ]
+    );
 
     expect(result).toEqual(expected);
 })
