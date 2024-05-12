@@ -9,7 +9,7 @@ test('test function declaration with no arguments', ()=> {
     const parser = new Parser(lexer);
     const result: FunctionCall = parser.beginFucntion();
 
-    const expected: FunctionCall = new FunctionCall('functionName', []);
+    const expected: FunctionCall = new FunctionCall('functionName', [], []);
 
     expect(result).toEqual(expected);
 })
@@ -21,7 +21,7 @@ test('test function declaration with one argument', ()=> {
     const parser = new Parser(lexer);
     const result: FunctionCall = parser.beginFucntion();
 
-    const expected: FunctionCall = new FunctionCall('functionName', ["arg1"]);
+    const expected: FunctionCall = new FunctionCall('functionName', ["arg1"], []);
 
     expect(result).toEqual(expected);
 })
@@ -33,11 +33,10 @@ test('test function declaration with multiple arguments', ()=> {
     const parser = new Parser(lexer);
     const result: FunctionCall = parser.beginFucntion();
 
-    const expected = new FunctionCall('functionName', ["arg1", "anotherArg", "arg3"]);
+    const expected = new FunctionCall('functionName', ["arg1", "anotherArg", "arg3"], []);
 
     expect(result).toEqual(expected);
 })
-
 
 
 test('test integer variable assignment', ()=> {
@@ -48,6 +47,36 @@ test('test integer variable assignment', ()=> {
     const result: Assignment = parser.assignment();
 
     const expected = new Assignment("varName", 14);
+
+    expect(result).toEqual(expected);
+})
+
+
+
+test('test function with an integer assignment', ()=> {
+    const inputText = `def functionName(): 
+    varName = 14`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result: FunctionCall = parser.beginFucntion();
+
+    console.log(result)
+    const expected = new FunctionCall('functionName', [], [new Assignment("varName", 14)]);
+
+    expect(result).toEqual(expected);
+})
+
+test('test function with multiple integer assignments', ()=> {
+    const inputText = `def functionName(): 
+    varName = 14
+    anotherVar = 6969`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result: FunctionCall = parser.beginFucntion();
+
+    const expected = new FunctionCall('functionName', [], [new Assignment("varName", 14), new Assignment("anotherVar", 6969)]);
 
     expect(result).toEqual(expected);
 })

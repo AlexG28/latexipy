@@ -1,3 +1,5 @@
+import { error } from "@sveltejs/kit";
+
 export class Token {
     type: string;
     value: string | number;
@@ -32,11 +34,13 @@ export class BinOpNode extends ASTNode {
 export class FunctionCall extends ASTNode {
     name: string; 
     arguments: string[];
+    statements: ASTNode[];
 
-    constructor(name: string, args: string[]) {
+    constructor(name: string, args: string[], statements: ASTNode[]) {
         super('FunctionCall');
         this.name = name;
         this.arguments = args;
+        this.statements = statements;
     }
 }
 
@@ -203,6 +207,14 @@ export class Parser{
         this.currentToken = this.lexer.getNextToken();
     }
 
+    endOfFile(): boolean {
+        return this.currentToken.type == "EOF"
+    }
+
+    tokenType(): string{
+        return this.currentToken.type
+    }
+
     consumeToken(tokenType: string){
         if (this.currentToken.type === tokenType){
             this.currentToken = this.lexer.getNextToken();
@@ -214,6 +226,7 @@ export class Parser{
     beginFucntion(): FunctionCall{
         let args: string[] = [];
         let functionName: string = "";
+        let statement: ASTNode[] = [];
 
         this.consumeToken("DEF")
         functionName = String(this.currentToken.value);
@@ -236,7 +249,38 @@ export class Parser{
         this.consumeToken("RPAREN")
         this.consumeToken("COLON")
 
-        return new FunctionCall(functionName, args);
+        // function ends, statements begin
+
+        while(!this.endOfFile()) {
+            this.consumeToken("NEWLINE")
+            switch(this.tokenType()) { 
+                case "IF": { 
+                   //statements; 
+                   break; 
+                }  
+                case "WHILE": { 
+                   //statements; 
+                   break; 
+                } 
+                case "RETURN": { 
+                   //statements; 
+                   break; 
+                } 
+                case "ID": { 
+                    //statements;    
+                    statement.push(this.assignment())
+                    break; 
+                } 
+                default: { 
+                   //statements; 
+                   throw new Error('Somethings wrong');
+                   break; 
+                } 
+            } 
+        }
+
+
+        return new FunctionCall(functionName, args, statement);
     }
 
 
