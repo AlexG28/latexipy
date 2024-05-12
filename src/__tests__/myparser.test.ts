@@ -100,13 +100,60 @@ test('test function with multiple integer assignments', ()=> {
 })
 
 
-test('test expression with addition', ()=> {
+test('test expressions 1', ()=> {
     const inputText = `anotherVar = (19 + thisVar) * 4`;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
     const result: Assignment = parser.assignment();
 
-    console.log(result)
+    const anotherVar = new Variable("anotherVar");
+    const thisVar = new Variable("thisVar");
 
+    const expected = new Assignment(
+        anotherVar,
+        new BinOpNode(
+            new BinOpNode(
+                new NumNode(19),
+                new Token("PLUS", "+"),
+                thisVar
+            ), 
+            new Token("MULTIPLY", "*"),
+            new NumNode(4)
+        )
+    )
+
+    expect(result).toEqual(expected);
+
+})
+
+test('test expressions 2', ()=> {
+    const inputText = `anotherVar = (anotherVar / thisVar) - (233*2)`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result: Assignment = parser.assignment();
+
+    const anotherVar = new Variable("anotherVar");
+    const thisVar = new Variable("thisVar");
+
+
+    const expected = new Assignment(
+        anotherVar,
+        new BinOpNode(
+            new BinOpNode(
+                anotherVar,
+                new Token("DIVIDE", "/"),
+                thisVar
+            ), 
+            new Token("MINUS", "-"),
+            new BinOpNode(
+                new NumNode(233),
+                new Token("MULTIPLY", "*"),
+                new NumNode(2)
+            )
+        )
+    )
+
+    expect(result).toEqual(expected);
 })
