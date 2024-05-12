@@ -1,6 +1,14 @@
-import { BinOpNode, ASTNode, Token, NumNode, FunctionCall, Assignment } from "$lib/nodes";
-import { Lexer, Parser } from "$lib/myparser";
+import { 
+    BinOpNode, 
+    ASTNode, 
+    Token, 
+    NumNode, 
+    FunctionCall, 
+    Assignment,
+    Variable
+} from "$lib/nodes";
 
+import { Lexer, Parser } from "$lib/myparser";
 import { expect, test } from 'vitest'
 
 test('test function declaration with no arguments', ()=> {
@@ -47,7 +55,7 @@ test('test integer variable assignment', ()=> {
     const parser = new Parser(lexer);
     const result: Assignment = parser.assignment();
 
-    const expected = new Assignment("varName", new NumNode(14));
+    const expected = new Assignment(new Variable("varName"), new NumNode(14));
 
     expect(result).toEqual(expected);
 })
@@ -62,7 +70,7 @@ test('test function with an integer assignment', ()=> {
     const parser = new Parser(lexer);
     const result: FunctionCall = parser.beginFunction();
 
-    const expected = new FunctionCall('functionName', [], [new Assignment("varName", new NumNode(14))]);
+    const expected = new FunctionCall('functionName', [], [new Assignment(new Variable("varName"), new NumNode(14))]);
 
     expect(result).toEqual(expected);
 })
@@ -76,14 +84,29 @@ test('test function with multiple integer assignments', ()=> {
     const parser = new Parser(lexer);
     const result: FunctionCall = parser.beginFunction();
 
+    const var1 = new Variable("varName");
+    const var2 = new Variable("anotherVar");
+
     const expected = new FunctionCall(
         'functionName', 
         [], 
         [
-            new Assignment("varName", new NumNode(14)), 
-            new Assignment("anotherVar", new NumNode(6969))
+            new Assignment(var1, new NumNode(14)), 
+            new Assignment(var2, new NumNode(6969))
         ]
     );
 
     expect(result).toEqual(expected);
+})
+
+
+test('test expression with addition', ()=> {
+    const inputText = `anotherVar = (19 + thisVar) * 4`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result: Assignment = parser.assignment();
+
+    console.log(result)
+
 })

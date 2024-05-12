@@ -1,4 +1,12 @@
-import { Token, ASTNode, BinOpNode, FunctionCall, Assignment, NumNode} from "../lib/nodes";
+import { 
+    Token, 
+    ASTNode, 
+    BinOpNode, 
+    FunctionCall, 
+    Assignment, 
+    NumNode,
+    Variable
+} from "../lib/nodes";
 
 
 export class Lexer {
@@ -229,17 +237,18 @@ export class Parser{
 
 
     assignment(): Assignment{
-        let variableName: string = "";
+        let variable: Variable;
         let value: ASTNode;
 
-        variableName = String(this.currentToken.value);
+        variable = new Variable(String(this.currentToken.value));
         this.consumeToken("ID");
         
         this.consumeToken("ASSIGN");
                 
         value = this.expression();
 
-        return new Assignment(variableName, value);
+
+        return new Assignment(variable, value);
     }
 
     expression(): ASTNode{
@@ -252,6 +261,11 @@ export class Parser{
         let node = this.factor(); // this is the current object being worked on
 
         // this is where we would handle binary operators
+        while (['MULTIPLY', 'DIVIDE', 'PLUS', 'MINUS'].includes(this.currentToken.type)) {
+            const token = this.currentToken;
+            this.consumeToken(this.currentToken.type);
+            node = new BinOpNode(node, token, this.factor());
+        }
 
         return node;
     }
@@ -269,10 +283,11 @@ export class Parser{
             this.consumeToken("RPAREN");
             return result;
         } else if (currentToken.type == "ID") {
-            return this.assignment();
+            const variableName = String(currentToken.value);
+            this.consumeToken("ID");
+            return new Variable(variableName)
         } else {
             throw new Error("Invalid syntax")
         }
     }
-
 }

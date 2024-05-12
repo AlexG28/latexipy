@@ -38,6 +38,15 @@ export class NumNode extends ASTNode {
     }
 }
 
+export class Variable extends ASTNode{
+    name: string; 
+    
+    constructor(name: string) {
+        super("Variable");
+        this.name = name;
+    }
+}
+
 export class FunctionCall extends ASTNode {
     name: string; 
     arguments: string[];
@@ -52,12 +61,12 @@ export class FunctionCall extends ASTNode {
 }
 
 export class Assignment extends ASTNode {
-    variableName: string; 
+    variable: Variable; 
     value: ASTNode; // expression
 
-    constructor(name: string, value: ASTNode) {
+    constructor(name: Variable, value: ASTNode) {
         super('Assignment');
-        this.variableName = name;
+        this.variable = name;
         this.value = value;
     }
 }
