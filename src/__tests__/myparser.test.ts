@@ -5,7 +5,8 @@ import {
     NumNode, 
     FunctionCall, 
     Assignment,
-    Variable
+    Variable,
+    Return
 } from "$lib/nodes";
 
 import { Lexer, Parser } from "$lib/myparser";
@@ -223,6 +224,44 @@ test('test function with multiple expressions', ()=> {
                 )
             )
         ]
+    );
+
+    expect(result).toEqual(expected);
+})
+
+
+
+test('test simple return statement', ()=> {
+    const inputText = `return 4`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result: Return = parser.return();
+
+    const expected = new Return(new NumNode(4));
+
+    expect(result).toEqual(expected);
+})
+
+test('test advanced return statement', ()=> {
+    const inputText = `return varName + (3/2)`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result: Return = parser.return();
+
+    const varName = new Variable("varName");
+
+    const expected = new Return(
+        new BinOpNode(
+            varName,
+            new Token("PLUS", "+"),
+            new BinOpNode(
+                new NumNode(3),
+                new Token("DIVIDE", "/"),
+                new NumNode(2)
+            ), 
+        ), 
     );
 
     expect(result).toEqual(expected);

@@ -70,3 +70,12 @@ export class Assignment extends ASTNode {
         this.value = value;
     }
 }
+
+export class Return extends ASTNode {
+    value: ASTNode;
+
+    constructor(value: ASTNode) {
+        super('Return');
+        this.value = value;
+    }
+}

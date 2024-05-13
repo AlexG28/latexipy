@@ -5,7 +5,8 @@ import {
     FunctionCall, 
     Assignment, 
     NumNode,
-    Variable
+    Variable,
+    Return
 } from "../lib/nodes";
 
 
@@ -72,6 +73,8 @@ export class Lexer {
                     return new Token('WHILE', id);
                 } else if (id == 'def') {
                     return new Token('DEF', id);
+                } else if (id == 'return') {
+                    return new Token('RETURN', id);
                 } else {
                     return new Token('ID', id);
                 }
@@ -217,7 +220,7 @@ export class Parser{
                    break; 
                 } 
                 case "RETURN": { 
-                   //statements; 
+                   statement.push(this.return())
                    break; 
                 } 
                 case "ID": { 
@@ -235,6 +238,14 @@ export class Parser{
         return new FunctionCall(functionName, args, statement);
     }
 
+    return(): Return {
+        let value: ASTNode;
+        
+        this.consumeToken("RETURN");
+        value = this.expression();
+
+        return new Return(value);
+    }
 
     assignment(): Assignment{
         let variable: Variable;
@@ -246,7 +257,6 @@ export class Parser{
         this.consumeToken("ASSIGN");
                 
         value = this.expression();
-
 
         return new Assignment(variable, value);
     }
