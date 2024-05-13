@@ -178,3 +178,52 @@ test('test boolean expression', ()=> {
 
     expect(result).toEqual(expected);
 })
+
+
+test('test function with multiple expressions', ()=> {
+    const inputText = `def functionName(): 
+    varName = 14 + 19
+    anotherVar = 69 > 68
+    lastVar = varName - anotherVar`; // this is subtracging a bool from an int but a parser doesn't care about correctness
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result: FunctionCall = parser.beginFunction();
+
+    const var1 = new Variable("varName");
+    const var2 = new Variable("anotherVar");
+    const var3 = new Variable("lastVar");
+
+    const expected = new FunctionCall(
+        'functionName', 
+        [], 
+        [
+            new Assignment(
+                var1, 
+                new BinOpNode(
+                    new NumNode(14),
+                    new Token('PLUS', '+'),
+                    new NumNode(19),
+                )
+            ), 
+            new Assignment(
+                var2, 
+                new BinOpNode(
+                    new NumNode(69),
+                    new Token('GREATERTHAN', '>'),
+                    new NumNode(68),
+                )
+            ), 
+            new Assignment(
+                var3, 
+                new BinOpNode(
+                    var1,
+                    new Token('MINUS', '-'),
+                    var2,
+                )
+            )
+        ]
+    );
+
+    expect(result).toEqual(expected);
+})
