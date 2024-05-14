@@ -49,14 +49,30 @@ export class Variable extends ASTNode{
 
 export class FunctionCall extends ASTNode {
     name: string; 
+    indentLevel: number;
     arguments: string[];
     statements: ASTNode[];
 
-    constructor(name: string, args: string[], statements: ASTNode[]) {
+    constructor(name: string, indentLevel: number, args: string[], statements: ASTNode[]) {
         super('FunctionCall');
         this.name = name;
         this.arguments = args;
         this.statements = statements;
+        this.indentLevel = indentLevel;
+    }
+    
+}
+
+export class IfStatement extends ASTNode {
+    indentLevel: number;
+    condition: ASTNode;
+    statements: ASTNode[];
+
+    constructor(condition: ASTNode, indentLevel: number, statements: ASTNode[]) {
+        super('IfStatement');
+        this.condition = condition;
+        this.statements = statements;
+        this.indentLevel = indentLevel;
     }
 }
 

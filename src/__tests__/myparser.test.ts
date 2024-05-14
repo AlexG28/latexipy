@@ -6,44 +6,48 @@ import {
     FunctionCall, 
     Assignment,
     Variable,
-    Return
+    Return, 
+    IfStatement
 } from "$lib/nodes";
 
 import { Lexer, Parser } from "$lib/myparser";
 import { expect, test } from 'vitest'
 
 test('test function declaration with no arguments', ()=> {
-    const inputText = `def functionName():`;
+    const inputText = `def functionName():
+    `;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: FunctionCall = parser.beginFunction();
+    const result: FunctionCall = parser.beginFunction(0);
 
-    const expected: FunctionCall = new FunctionCall('functionName', [], []);
+    const expected: FunctionCall = new FunctionCall('functionName', 0, [], []);
 
     expect(result).toEqual(expected);
 })
 
 test('test function declaration with one argument', ()=> {
-    const inputText = `def functionName(arg1):`;
+    const inputText = `def functionName(arg1):
+    `;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: FunctionCall = parser.beginFunction();
+    const result: FunctionCall = parser.beginFunction(0);
 
-    const expected: FunctionCall = new FunctionCall('functionName', ["arg1"], []);
+    const expected: FunctionCall = new FunctionCall('functionName', 0, ["arg1"], []);
 
     expect(result).toEqual(expected);
 })
 
 test('test function declaration with multiple arguments', ()=> {
-    const inputText = `def functionName(arg1, anotherArg, arg3):`;
+    const inputText = `def functionName(arg1, anotherArg, arg3):
+    `;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: FunctionCall = parser.beginFunction();
+    const result: FunctionCall = parser.beginFunction(0);
 
-    const expected = new FunctionCall('functionName', ["arg1", "anotherArg", "arg3"], []);
+    const expected = new FunctionCall('functionName', 0, ["arg1", "anotherArg", "arg3"], []);
 
     expect(result).toEqual(expected);
 })
@@ -54,7 +58,7 @@ test('test integer variable assignment', ()=> {
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: Assignment = parser.assignment();
+    const result: Assignment = parser.assignment(0);
 
     const expected = new Assignment(new Variable("varName"), new NumNode(14));
 
@@ -65,31 +69,32 @@ test('test integer variable assignment', ()=> {
 
 test('test function with an integer assignment', ()=> {
     const inputText = `def functionName(): 
-    varName = 14`;
+varName = 14`;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: FunctionCall = parser.beginFunction();
+    const result: FunctionCall = parser.beginFunction(0);
 
-    const expected = new FunctionCall('functionName', [], [new Assignment(new Variable("varName"), new NumNode(14))]);
+    const expected = new FunctionCall('functionName', 0, [], [new Assignment(new Variable("varName"), new NumNode(14))]);
 
     expect(result).toEqual(expected);
 })
 
 test('test function with multiple integer assignments', ()=> {
     const inputText = `def functionName(): 
-    varName = 14
-    anotherVar = 6969`;
+varName = 14
+anotherVar = 6969`;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: FunctionCall = parser.beginFunction();
+    const result: FunctionCall = parser.beginFunction(0);
 
     const var1 = new Variable("varName");
     const var2 = new Variable("anotherVar");
 
     const expected = new FunctionCall(
         'functionName', 
+        0,
         [], 
         [
             new Assignment(var1, new NumNode(14)), 
@@ -106,7 +111,7 @@ test('test expressions 1', ()=> {
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: Assignment = parser.assignment();
+    const result: Assignment = parser.assignment(0);
 
     const anotherVar = new Variable("anotherVar");
     const thisVar = new Variable("thisVar");
@@ -133,7 +138,7 @@ test('test expressions 2', ()=> {
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: Assignment = parser.assignment();
+    const result: Assignment = parser.assignment(0);
 
     const anotherVar = new Variable("anotherVar");
     const thisVar = new Variable("thisVar");
@@ -164,7 +169,7 @@ test('test boolean expression', ()=> {
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: Assignment = parser.assignment();
+    const result: Assignment = parser.assignment(0);
 
     const anotherVar = new Variable("anotherVar");
 
@@ -186,7 +191,7 @@ test('test simple return statement', ()=> {
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: Return = parser.return();
+    const result: Return = parser.return(0);
 
     const expected = new Return(new NumNode(4));
 
@@ -198,7 +203,7 @@ test('test advanced return statement', ()=> {
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: Return = parser.return();
+    const result: Return = parser.return(0);
 
     const varName = new Variable("varName");
 
@@ -217,16 +222,28 @@ test('test advanced return statement', ()=> {
     expect(result).toEqual(expected);
 })
 
-test('end to end test', ()=> {
-    const inputText = `def functionName(): 
-    varName = 14 + 19
-    anotherVar = 69 > 68
-    lastVar = varName - anotherVar
-    return varName`; 
+
+test('test if statement', ()=> {
+    const inputText = `if 10 > 4:
+    `;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: FunctionCall = parser.beginFunction();
+    const result = parser.ifStructure(0);
+
+})
+
+
+test('end to end test', ()=> {
+    const inputText = `def functionName(): 
+varName = 14 + 19
+anotherVar = 69 > 68
+lastVar = varName - anotherVar
+return varName`; 
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result: FunctionCall = parser.beginFunction(0);
 
     const var1 = new Variable("varName");
     const var2 = new Variable("anotherVar");
@@ -234,6 +251,7 @@ test('end to end test', ()=> {
 
     const expected = new FunctionCall(
         'functionName', 
+        0,
         [], 
         [
             new Assignment(
@@ -266,3 +284,44 @@ test('end to end test', ()=> {
 
     expect(result).toEqual(expected);
 })
+
+
+test('test tab counting', ()=> {
+    const inputText = 
+`def func1(): 
+    if 2>1:
+        b=1
+    c=2
+    d=3
+`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const res = parser.beginFunction(0);
+
+    const expected = new FunctionCall(
+        'func1', 
+        0,
+        [], 
+        [
+            new IfStatement(
+                new BinOpNode(
+                    new NumNode(2),
+                    new Token("GREATERTHAN", "+"),
+                    new NumNode(1),
+                ), 
+                0,
+                [
+                    new Assignment(
+                        new Variable("B"), 
+                        new NumNode(1)
+                    )
+                ]
+
+            ),
+            new Assignment(new Variable("C"), new NumNode(2)),
+            new Assignment(new Variable("D"), new NumNode(3)),
+        ]
+    );
+})
+

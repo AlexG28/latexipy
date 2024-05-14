@@ -6,7 +6,8 @@ import {
     Assignment, 
     NumNode,
     Variable,
-    Return
+    Return,
+    IfStatement
 } from "../lib/nodes";
 
 
@@ -14,11 +15,13 @@ export class Lexer {
     text: string;
     pos: number;
     currentChar: string | null;
+    currentIndent: number;
 
     constructor(text: string) {
         this.text = text;
         this.pos = 0;
         this.currentChar = this.text[this.pos];
+        this.currentIndent = 0;
     }
 
     advance() {
@@ -29,6 +32,24 @@ export class Lexer {
             this.currentChar = null;
         }
     }
+
+
+    countWhiteSpaces() {
+        let counter = 0; 
+        while(this.text[this.pos + counter] === ' '){
+            counter += 1
+        } 
+        this.currentIndent = counter;
+    }    
+
+    // skipAndCountWhiteSpaces(){
+    //     let counter = 0
+    //     while(this.currentChar === ' '){
+    //         this.advance();
+    //         counter += 1;
+    //     }
+    //     this.currentIndent = counter;
+    // }
 
     skipWhitespace() {
         while(this.currentChar === ' '){
@@ -45,7 +66,13 @@ export class Lexer {
 
             if (this.currentChar == '\n') {
                 this.advance();
+                this.countWhiteSpaces(); 
                 return new Token("NEWLINE", "");
+            }
+            
+            if (this.currentChar == '\t') {
+                this.advance();
+                return new Token("TAB", "");
             }
 
             if (/\d/.test(this.currentChar)) {
@@ -141,6 +168,10 @@ export class Lexer {
         return new Token('EOF', '');
     }
 
+    updateIndent(): number{
+        return Math.floor(this.currentIndent / 4);
+    }
+
     getAllTokens(): Token[]{
         let output: Token[] = [];
 
@@ -158,14 +189,20 @@ export class Lexer {
 export class Parser{
     lexer: Lexer;
     currentToken: Token;
+    currentIndentTabs: number; 
 
     constructor(lexer: Lexer) {
         this.lexer = lexer;
         this.currentToken = this.lexer.getNextToken();
+        this.currentIndentTabs = 0;
     }
 
     endOfFile(): boolean {
         return this.currentToken.type == "EOF"
+    }
+
+    newLine(): boolean {
+        return this.currentToken.type == "NEWLINE"
     }
 
     tokenType(): string{
@@ -175,12 +212,17 @@ export class Parser{
     consumeToken(tokenType: string){
         if (this.currentToken.type === tokenType){
             this.currentToken = this.lexer.getNextToken();
+            
+            if (tokenType == "NEWLINE") {
+                this.currentIndentTabs = this.lexer.updateIndent();
+            }
+            
         } else {
             throw new Error("Invalid Syntax");
         }
     }
 
-    beginFunction(): FunctionCall{
+    beginFunction(indent: number): FunctionCall{
         let args: string[] = [];
         let functionName: string = "";
         let statement: ASTNode[] = [];
@@ -205,14 +247,14 @@ export class Parser{
 
         this.consumeToken("RPAREN")
         this.consumeToken("COLON")
+        
+        this.consumeToken("NEWLINE") // the current indent has been updated
+        
+        while(!this.endOfFile() && this.currentIndentTabs >= indent) {
 
-        // function ends, statements begin
-
-        while(!this.endOfFile()) {
-            this.consumeToken("NEWLINE")
             switch(this.tokenType()) { 
                 case "IF": { 
-                   //statements; 
+                   statement.push(this.ifStructure(1))
                    break; 
                 }  
                 case "WHILE": { 
@@ -220,12 +262,12 @@ export class Parser{
                    break; 
                 } 
                 case "RETURN": { 
-                   statement.push(this.return())
+                   statement.push(this.return(1))
                    break; 
                 } 
                 case "ID": { 
                     //statements;    
-                    statement.push(this.assignment())
+                    statement.push(this.assignment(1))
                     break; 
                 } 
                 default: { 
@@ -233,12 +275,66 @@ export class Parser{
                    throw new Error('Somethings wrong');
                 } 
             } 
+            
+            if (this.newLine()){
+                this.consumeToken("NEWLINE") // the current indent has been updated
+            }
+
         }
 
-        return new FunctionCall(functionName, args, statement);
+        return new FunctionCall(functionName, 0, args, statement);
     }
 
-    return(): Return {
+
+    ifStructure(indent: number): IfStatement {
+        let statement: ASTNode[] = [];
+
+        this.consumeToken("IF");
+
+        let condition = this.expression(); 
+        this.consumeToken("COLON");
+        this.currentIndentTabs += 1; // start of the inner 
+
+        this.consumeToken("NEWLINE"); // when the newline token is consumed, then we check the indent level 
+
+
+        while(!this.endOfFile() && this.currentIndentTabs >= indent) {
+            
+            switch(this.tokenType()) { 
+                case "IF": { 
+                   statement.push(this.ifStructure(indent + 1))
+                   break; 
+                }  
+                case "WHILE": { 
+                   //statements; 
+                   break; 
+                } 
+                case "RETURN": { 
+                   statement.push(this.return(indent + 1))
+                   break; 
+                } 
+                case "ID": { 
+                    //statements;    
+                    statement.push(this.assignment(indent + 1))
+                    break; 
+                } 
+                default: { 
+                   //statements; 
+                   throw new Error('Somethings wrong');
+                } 
+            }
+            
+            if (this.newLine()){
+                this.consumeToken("NEWLINE");
+            }
+            
+        }
+        
+        return new IfStatement(condition, 0, statement);
+        
+    }
+
+    return(indent: number): Return {
         let value: ASTNode;
         
         this.consumeToken("RETURN");
@@ -247,7 +343,7 @@ export class Parser{
         return new Return(value);
     }
 
-    assignment(): Assignment{
+    assignment(indent: number): Assignment{
         let variable: Variable;
         let value: ASTNode;
 
