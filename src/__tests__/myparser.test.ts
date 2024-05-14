@@ -21,7 +21,7 @@ test('test function declaration with no arguments', ()=> {
     const parser = new Parser(lexer);
     const result: FunctionCall = parser.beginFunction(0);
 
-    const expected: FunctionCall = new FunctionCall('functionName', 0, [], []);
+    const expected: FunctionCall = new FunctionCall('functionName', [], []);
 
     expect(result).toEqual(expected);
 })
@@ -34,7 +34,7 @@ test('test function declaration with one argument', ()=> {
     const parser = new Parser(lexer);
     const result: FunctionCall = parser.beginFunction(0);
 
-    const expected: FunctionCall = new FunctionCall('functionName', 0, ["arg1"], []);
+    const expected: FunctionCall = new FunctionCall('functionName', ["arg1"], []);
 
     expect(result).toEqual(expected);
 })
@@ -47,7 +47,7 @@ test('test function declaration with multiple arguments', ()=> {
     const parser = new Parser(lexer);
     const result: FunctionCall = parser.beginFunction(0);
 
-    const expected = new FunctionCall('functionName', 0, ["arg1", "anotherArg", "arg3"], []);
+    const expected = new FunctionCall('functionName', ["arg1", "anotherArg", "arg3"], []);
 
     expect(result).toEqual(expected);
 })
@@ -68,22 +68,24 @@ test('test integer variable assignment', ()=> {
 
 
 test('test function with an integer assignment', ()=> {
-    const inputText = `def functionName(): 
-varName = 14`;
+    const inputText = 
+`def functionName(): 
+    varName = 14`;  
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
     const result: FunctionCall = parser.beginFunction(0);
 
-    const expected = new FunctionCall('functionName', 0, [], [new Assignment(new Variable("varName"), new NumNode(14))]);
+    const expected = new FunctionCall('functionName', [], [new Assignment(new Variable("varName"), new NumNode(14))]);
 
     expect(result).toEqual(expected);
 })
 
 test('test function with multiple integer assignments', ()=> {
-    const inputText = `def functionName(): 
-varName = 14
-anotherVar = 6969`;
+    const inputText = 
+`def functionName(): 
+    varName = 14
+    anotherVar = 6969`;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
@@ -94,7 +96,6 @@ anotherVar = 6969`;
 
     const expected = new FunctionCall(
         'functionName', 
-        0,
         [], 
         [
             new Assignment(var1, new NumNode(14)), 
@@ -191,7 +192,7 @@ test('test simple return statement', ()=> {
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: Return = parser.return(0);
+    const result: Return = parser.return();
 
     const expected = new Return(new NumNode(4));
 
@@ -203,7 +204,7 @@ test('test advanced return statement', ()=> {
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: Return = parser.return(0);
+    const result: Return = parser.return();
 
     const varName = new Variable("varName");
 
@@ -235,11 +236,13 @@ test('test if statement', ()=> {
 
 
 test('end to end test', ()=> {
-    const inputText = `def functionName(): 
-varName = 14 + 19
-anotherVar = 69 > 68
-lastVar = varName - anotherVar
-return varName`; 
+    const inputText = 
+`def functionName(): 
+    varName = 14 + 19
+    anotherVar = 69 > 68
+    if anotherVar:
+        lastVar = varName - anotherVar
+    return varName`; 
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
@@ -251,7 +254,6 @@ return varName`;
 
     const expected = new FunctionCall(
         'functionName', 
-        0,
         [], 
         [
             new Assignment(
@@ -270,14 +272,19 @@ return varName`;
                     new NumNode(68),
                 )
             ), 
-            new Assignment(
-                var3, 
-                new BinOpNode(
-                    var1,
-                    new Token('MINUS', '-'),
-                    var2,
-                )
-            ), 
+            new IfStatement(
+                var2,
+                [
+                    new Assignment(
+                        var3,
+                        new BinOpNode(
+                            var1,
+                            new Token('MINUS', '-'),
+                            var2
+                        )
+                    ),
+                ]
+            ),
             new Return(var1)
         ]
     );
@@ -297,31 +304,31 @@ test('test tab counting', ()=> {
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const res = parser.beginFunction(0);
+    const result = parser.beginFunction(0);
 
     const expected = new FunctionCall(
         'func1', 
-        0,
         [], 
         [
             new IfStatement(
                 new BinOpNode(
                     new NumNode(2),
-                    new Token("GREATERTHAN", "+"),
+                    new Token("GREATERTHAN", ">"),
                     new NumNode(1),
                 ), 
-                0,
                 [
                     new Assignment(
-                        new Variable("B"), 
+                        new Variable("b"), 
                         new NumNode(1)
                     )
                 ]
 
             ),
-            new Assignment(new Variable("C"), new NumNode(2)),
-            new Assignment(new Variable("D"), new NumNode(3)),
+            new Assignment(new Variable("c"), new NumNode(2)),
+            new Assignment(new Variable("d"), new NumNode(3)),
         ]
     );
+    expect(result).toEqual(expected);
+
 })
 

@@ -33,7 +33,6 @@ export class Lexer {
         }
     }
 
-
     countWhiteSpaces() {
         let counter = 0; 
         while(this.text[this.pos + counter] === ' '){
@@ -41,15 +40,6 @@ export class Lexer {
         } 
         this.currentIndent = counter;
     }    
-
-    // skipAndCountWhiteSpaces(){
-    //     let counter = 0
-    //     while(this.currentChar === ' '){
-    //         this.advance();
-    //         counter += 1;
-    //     }
-    //     this.currentIndent = counter;
-    // }
 
     skipWhitespace() {
         while(this.currentChar === ' '){
@@ -247,14 +237,14 @@ export class Parser{
 
         this.consumeToken("RPAREN")
         this.consumeToken("COLON")
-        
+
         this.consumeToken("NEWLINE") // the current indent has been updated
         
-        while(!this.endOfFile() && this.currentIndentTabs >= indent) {
+        while(!this.endOfFile() && this.currentIndentTabs > indent) {
 
             switch(this.tokenType()) { 
                 case "IF": { 
-                   statement.push(this.ifStructure(1))
+                   statement.push(this.ifStructure(indent + 1))
                    break; 
                 }  
                 case "WHILE": { 
@@ -262,12 +252,12 @@ export class Parser{
                    break; 
                 } 
                 case "RETURN": { 
-                   statement.push(this.return(1))
+                   statement.push(this.return())
                    break; 
                 } 
                 case "ID": { 
                     //statements;    
-                    statement.push(this.assignment(1))
+                    statement.push(this.assignment(indent + 1))
                     break; 
                 } 
                 default: { 
@@ -282,7 +272,7 @@ export class Parser{
 
         }
 
-        return new FunctionCall(functionName, 0, args, statement);
+        return new FunctionCall(functionName, args, statement);
     }
 
 
@@ -292,13 +282,11 @@ export class Parser{
         this.consumeToken("IF");
 
         let condition = this.expression(); 
+        
         this.consumeToken("COLON");
-        this.currentIndentTabs += 1; // start of the inner 
+        this.consumeToken("NEWLINE");
 
-        this.consumeToken("NEWLINE"); // when the newline token is consumed, then we check the indent level 
-
-
-        while(!this.endOfFile() && this.currentIndentTabs >= indent) {
+        while(!this.endOfFile() && this.currentIndentTabs > indent) {
             
             switch(this.tokenType()) { 
                 case "IF": { 
@@ -310,7 +298,7 @@ export class Parser{
                    break; 
                 } 
                 case "RETURN": { 
-                   statement.push(this.return(indent + 1))
+                   statement.push(this.return())
                    break; 
                 } 
                 case "ID": { 
@@ -330,11 +318,11 @@ export class Parser{
             
         }
         
-        return new IfStatement(condition, 0, statement);
+        return new IfStatement(condition, statement);
         
     }
 
-    return(indent: number): Return {
+    return(): Return {
         let value: ASTNode;
         
         this.consumeToken("RETURN");
