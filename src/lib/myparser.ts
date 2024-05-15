@@ -238,39 +238,9 @@ export class Parser{
         this.consumeToken("RPAREN")
         this.consumeToken("COLON")
 
-        this.consumeToken("NEWLINE") // the current indent has been updated
-        
-        while(!this.endOfFile() && this.currentIndentTabs > indent) {
+        this.consumeToken("NEWLINE")
 
-            switch(this.tokenType()) { 
-                case "IF": { 
-                   statement.push(this.ifStructure(indent + 1))
-                   break; 
-                }  
-                case "WHILE": { 
-                   //statements; 
-                   break; 
-                } 
-                case "RETURN": { 
-                   statement.push(this.return())
-                   break; 
-                } 
-                case "ID": { 
-                    //statements;    
-                    statement.push(this.assignment(indent + 1))
-                    break; 
-                } 
-                default: { 
-                   //statements; 
-                   throw new Error('Somethings wrong');
-                } 
-            } 
-            
-            if (this.newLine()){
-                this.consumeToken("NEWLINE") // the current indent has been updated
-            }
-
-        }
+        statement = this.collectStatements(indent);
 
         return new FunctionCall(functionName, args, statement);
     }
@@ -286,6 +256,15 @@ export class Parser{
         this.consumeToken("COLON");
         this.consumeToken("NEWLINE");
 
+        statement = this.collectStatements(indent);
+        
+        return new IfStatement(condition, statement);
+        
+    }
+
+    collectStatements(indent: number): ASTNode[] {
+        let statement: ASTNode[] = [];
+        
         while(!this.endOfFile() && this.currentIndentTabs > indent) {
             
             switch(this.tokenType()) { 
@@ -317,9 +296,8 @@ export class Parser{
             }
             
         }
-        
-        return new IfStatement(condition, statement);
-        
+
+        return statement;
     }
 
     return(): Return {
