@@ -329,6 +329,58 @@ test('test tab counting', ()=> {
         ]
     );
     expect(result).toEqual(expected);
+})
 
+test('test nested tab counting', ()=> {
+    const inputText = 
+`def func1(): 
+    if 2>1:
+        if 3>2: 
+            d=4
+        f=42
+    c=2
+`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result = parser.beginFunction(0);
+
+    const innerIfStatement = new IfStatement(
+        new BinOpNode(
+            new NumNode(3),
+            new Token("GREATERTHAN", ">"),
+            new NumNode(2),
+        ), 
+        [
+            new Assignment(
+                new Variable("d"), 
+                new NumNode(4)
+            )
+        ]
+
+    );
+
+    const outerIfStatement = new IfStatement(
+        new BinOpNode(
+            new NumNode(2),
+            new Token("GREATERTHAN", ">"),
+            new NumNode(1),
+        ), 
+        [
+            innerIfStatement, 
+            new Assignment(new Variable("f"), new NumNode(42)),
+        ]
+
+    )
+
+    const expected = new FunctionCall(
+        'func1', 
+        [], 
+        [
+            outerIfStatement,
+            new Assignment(new Variable("c"), new NumNode(2)),
+        ]
+    );
+    expect(result).toEqual(expected);
 })
 
