@@ -1,7 +1,6 @@
 import { Token } from "../lib/nodes";
 
 
-
 export class Lexer {
     text: string;
     pos: number;

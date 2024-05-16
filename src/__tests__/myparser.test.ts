@@ -14,6 +14,7 @@ import { Parser } from "$lib/myparser";
 import { Lexer } from "$lib/lexer";
 import { expect, test } from 'vitest'
 
+
 test('test function declaration with no arguments', ()=> {
     const inputText = `def functionName():
     `;
@@ -27,6 +28,7 @@ test('test function declaration with no arguments', ()=> {
     expect(result).toEqual(expected);
 })
 
+
 test('test function declaration with one argument', ()=> {
     const inputText = `def functionName(arg1):
     `;
@@ -39,6 +41,7 @@ test('test function declaration with one argument', ()=> {
 
     expect(result).toEqual(expected);
 })
+
 
 test('test function declaration with multiple arguments', ()=> {
     const inputText = `def functionName(arg1, anotherArg, arg3):
@@ -67,7 +70,6 @@ test('test integer variable assignment', ()=> {
 })
 
 
-
 test('test function with an integer assignment', ()=> {
     const inputText = 
 `def functionName(): 
@@ -81,6 +83,7 @@ test('test function with an integer assignment', ()=> {
 
     expect(result).toEqual(expected);
 })
+
 
 test('test function with multiple integer assignments', ()=> {
     const inputText = 
@@ -132,8 +135,8 @@ test('test expressions 1', ()=> {
     )
 
     expect(result).toEqual(expected);
-
 })
+
 
 test('test expressions 2', ()=> {
     const inputText = `anotherVar = (anotherVar / thisVar) - (233*2)`;
@@ -165,6 +168,7 @@ test('test expressions 2', ()=> {
 
     expect(result).toEqual(expected);
 })
+
 
 test('test boolean expression', ()=> {
     const inputText = `anotherVar = 19 > 4`;
@@ -199,6 +203,7 @@ test('test simple return statement', ()=> {
 
     expect(result).toEqual(expected);
 })
+
 
 test('test advanced return statement', ()=> {
     const inputText = `return varName + (3/2)`;
@@ -244,6 +249,7 @@ test('test if statement', ()=> {
 
     expect(result).toEqual(expected);
 })
+
 
 test('test while statement', ()=> {
     const inputText = `while 10 > 4:
