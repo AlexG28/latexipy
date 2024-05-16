@@ -11,7 +11,8 @@ import {
     WhileStatement
 } from "$lib/nodes";
 
-import { Lexer, Parser } from "$lib/myparser";
+import { Parser } from "$lib/myparser";
+import { Lexer } from "$lib/lexer";
 import { expect, test } from 'vitest'
 
 test('test function declaration with no arguments', ()=> {
