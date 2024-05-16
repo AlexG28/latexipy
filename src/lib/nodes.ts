@@ -72,9 +72,21 @@ export class IfStatement extends ASTNode {
     }
 }
 
+export class WhileStatement extends ASTNode {
+    condition: ASTNode;
+    statements: ASTNode[];
+
+    constructor(condition: ASTNode, statements: ASTNode[]) {
+        super('WhileStatement');
+        this.condition = condition;
+        this.statements = statements;
+    }
+}
+
+
 export class Assignment extends ASTNode {
     variable: Variable; 
-    value: ASTNode; // expression
+    value: ASTNode;
 
     constructor(name: Variable, value: ASTNode) {
         super('Assignment');

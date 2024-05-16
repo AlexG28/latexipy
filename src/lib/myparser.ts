@@ -7,7 +7,8 @@ import {
     NumNode,
     Variable,
     Return,
-    IfStatement
+    IfStatement,
+    WhileStatement
 } from "../lib/nodes";
 
 
@@ -259,7 +260,21 @@ export class Parser{
         statement = this.collectStatements(indent);
         
         return new IfStatement(condition, statement);
+    }
+
+    whileStructure(indent: number): WhileStatement{
+        let statement: ASTNode[] = [];
+
+        this.consumeToken("WHILE");
+
+        let condition = this.expression(); 
         
+        this.consumeToken("COLON");
+        this.consumeToken("NEWLINE");
+
+        statement = this.collectStatements(indent);
+        
+        return new WhileStatement(condition, statement);
     }
 
     collectStatements(indent: number): ASTNode[] {
@@ -269,11 +284,12 @@ export class Parser{
             
             switch(this.tokenType()) { 
                 case "IF": { 
-                   statement.push(this.ifStructure(indent + 1))
+                   statement.push(this.ifStructure(indent + 1));
                    break; 
                 }  
                 case "WHILE": { 
                    //statements; 
+                   statement.push(this.whileStructure(indent + 1));
                    break; 
                 } 
                 case "RETURN": { 
@@ -282,7 +298,7 @@ export class Parser{
                 } 
                 case "ID": { 
                     //statements;    
-                    statement.push(this.assignment(indent + 1))
+                    statement.push(this.assignment(indent + 1));
                     break; 
                 } 
                 default: { 

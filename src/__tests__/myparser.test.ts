@@ -7,7 +7,8 @@ import {
     Assignment,
     Variable,
     Return, 
-    IfStatement
+    IfStatement,
+    WhileStatement
 } from "$lib/nodes";
 
 import { Lexer, Parser } from "$lib/myparser";
@@ -232,62 +233,34 @@ test('test if statement', ()=> {
     const parser = new Parser(lexer);
     const result = parser.ifStructure(0);
 
+    const expected = new IfStatement(
+        new BinOpNode(
+            new NumNode(10),
+            new Token("GREATERTHAN", ">"),
+            new NumNode(4)
+        ), 
+        []
+    )
+
+    expect(result).toEqual(expected);
 })
 
-
-test('end to end test', ()=> {
-    const inputText = 
-`def functionName(): 
-    varName = 14 + 19
-    anotherVar = 69 > 68
-    if anotherVar:
-        lastVar = varName - anotherVar
-    return varName`; 
+test('test while statement', ()=> {
+    const inputText = `while 10 > 4:
+    `;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: FunctionCall = parser.beginFunction(0);
+    const result = parser.whileStructure(0);
 
-    const var1 = new Variable("varName");
-    const var2 = new Variable("anotherVar");
-    const var3 = new Variable("lastVar");
-
-    const expected = new FunctionCall(
-        'functionName', 
-        [], 
-        [
-            new Assignment(
-                var1, 
-                new BinOpNode(
-                    new NumNode(14),
-                    new Token('PLUS', '+'),
-                    new NumNode(19),
-                )
-            ), 
-            new Assignment(
-                var2, 
-                new BinOpNode(
-                    new NumNode(69),
-                    new Token('GREATERTHAN', '>'),
-                    new NumNode(68),
-                )
-            ), 
-            new IfStatement(
-                var2,
-                [
-                    new Assignment(
-                        var3,
-                        new BinOpNode(
-                            var1,
-                            new Token('MINUS', '-'),
-                            var2
-                        )
-                    ),
-                ]
-            ),
-            new Return(var1)
-        ]
-    );
+    const expected = new WhileStatement(
+        new BinOpNode(
+            new NumNode(10),
+            new Token("GREATERTHAN", ">"),
+            new NumNode(4)
+        ), 
+        []
+    )
 
     expect(result).toEqual(expected);
 })
@@ -384,3 +357,59 @@ test('test nested tab counting', ()=> {
     expect(result).toEqual(expected);
 })
 
+test('end to end test', ()=> {
+    const inputText = 
+`def functionName(): 
+    varName = 14 + 19
+    anotherVar = 69 > 68
+    if anotherVar:
+        lastVar = varName - anotherVar
+    return varName`; 
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result: FunctionCall = parser.beginFunction(0);
+
+    const var1 = new Variable("varName");
+    const var2 = new Variable("anotherVar");
+    const var3 = new Variable("lastVar");
+
+    const expected = new FunctionCall(
+        'functionName', 
+        [], 
+        [
+            new Assignment(
+                var1, 
+                new BinOpNode(
+                    new NumNode(14),
+                    new Token('PLUS', '+'),
+                    new NumNode(19),
+                )
+            ), 
+            new Assignment(
+                var2, 
+                new BinOpNode(
+                    new NumNode(69),
+                    new Token('GREATERTHAN', '>'),
+                    new NumNode(68),
+                )
+            ), 
+            new IfStatement(
+                var2,
+                [
+                    new Assignment(
+                        var3,
+                        new BinOpNode(
+                            var1,
+                            new Token('MINUS', '-'),
+                            var2
+                        )
+                    ),
+                ]
+            ),
+            new Return(var1)
+        ]
+    );
+
+    expect(result).toEqual(expected);
+})
