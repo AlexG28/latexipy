@@ -113,7 +113,8 @@ test('end to end test', ()=> {
     varName = 14 + 19
     anotherVar = 69 > 68
     if anotherVar:
-        lastVar = varName - anotherVar
+        while lastVar > 2:
+            lastVar = varName - anotherVar
     return varName`; 
 
     const lexer = new Lexer(inputText);
@@ -124,37 +125,53 @@ test('end to end test', ()=> {
     const var2 = new Variable("anotherVar");
     const var3 = new Variable("lastVar");
 
+    const firstAssignment = new Assignment(
+        var1, 
+        new BinOpNode(
+            new NumNode(14),
+            new Token('PLUS', '+'),
+            new NumNode(19),
+        )
+    );
+
+    const secondAssignment = new Assignment(
+        var2, 
+        new BinOpNode(
+            new NumNode(69),
+            new Token('GREATERTHAN', '>'),
+            new NumNode(68),
+        )
+    );
+
+    const thirdAssignment = new Assignment(
+        var3,
+        new BinOpNode(
+            var1,
+            new Token('MINUS', '-'),
+            var2
+        )
+    );
+    
+    const whileStatement = new WhileStatement(
+        new BinOpNode(
+            var3,
+            new Token('GREATERTHAN', '>'),
+            new NumNode(2)
+        ), 
+        [thirdAssignment]
+    );
+
+
     const expected = new FunctionCall(
         'functionName', 
         [], 
         [
-            new Assignment(
-                var1, 
-                new BinOpNode(
-                    new NumNode(14),
-                    new Token('PLUS', '+'),
-                    new NumNode(19),
-                )
-            ), 
-            new Assignment(
-                var2, 
-                new BinOpNode(
-                    new NumNode(69),
-                    new Token('GREATERTHAN', '>'),
-                    new NumNode(68),
-                )
-            ), 
+            firstAssignment, 
+            secondAssignment, 
             new IfStatement(
                 var2,
                 [
-                    new Assignment(
-                        var3,
-                        new BinOpNode(
-                            var1,
-                            new Token('MINUS', '-'),
-                            var2
-                        )
-                    ),
+                    whileStatement
                 ]
             ),
             new Return(var1)
