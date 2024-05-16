@@ -1,240 +1,223 @@
-interface Operators {
-    [key: string]: (x: number, y: number) => number;
-}
+import { 
+    Token, 
+    ASTNode, 
+    BinOpNode, 
+    FunctionCall, 
+    Assignment, 
+    NumNode,
+    Variable,
+    Return,
+    IfStatement,
+    WhileStatement
+} from "./nodes";
 
-interface Precedence {
-    [key: string]: number;
-}
-interface Associativity {
-    [key: string]: number;
-}
+import { Lexer } from "$lib/lexer";
 
-export class ExpressionParser{
-    input: string;
-    pos: number;
-    peek: string;
-    indent: number;
-    eval: Operators = {
-        "+": (x: number,y: number) => x+y,
-        "-": (x: number,y: number) => x-y,
-        "*": (x: number,y: number) => x*y,
-        "/": (x: number,y: number) => x/y
-    }; 
+export class Parser{
+    lexer: Lexer;
+    currentToken: Token;
+    currentIndentTabs: number; 
 
-    prec: Precedence = {
-        '+': 100,
-        '-': 100,
-        '*': 200,
-        '/': 200
-    }; 
-
-    assoc: Associativity = {
-        '+': 1,
-        '-': 1,
-        '*': 1,
-        '/': 1
-    };
-
-    constructor(){
-        this.input = ""
-        this.pos = 0
-        this.peek = ""
-        this.indent = 0
+    constructor(lexer: Lexer) {
+        this.lexer = lexer;
+        this.currentToken = this.lexer.getNextToken();
+        this.currentIndentTabs = 0;
     }
 
-
-    init(s: string){ 
-        this.input = s; 
-        this.pos = 0; 
-        this.indent = this.whitespace()
-        this.read();
+    endOfFile(): boolean {
+        return this.currentToken.type == "EOF"
     }
 
-    read() {
-        this.whitespace()
-        this.multiline_comment()
-        this.peek = this.input[this.pos++]
-        if (this.peek == '\n') {
-            this.indent = this.whitespace()
-        }
+    newLine(): boolean {
+        return this.currentToken.type == "NEWLINE"
     }
 
-    whitespace() { 
-        let start = this.pos 
-        while (this.input[this.pos] == ' '){
-            this.pos++
-        }
-
-        return this.pos - start
+    tokenType(): string{
+        return this.currentToken.type
     }
 
-
-    multiline_comment() {
-        if (this.input[this.pos] == '#'){
-            this.pos++
-            while(this.input[this.pos] != '#'){
-                this.pos++
+    consumeToken(tokenType: string){
+        if (this.currentToken.type === tokenType){
+            this.currentToken = this.lexer.getNextToken();
+            
+            if (tokenType == "NEWLINE") {
+                this.currentIndentTabs = this.lexer.updateIndent();
             }
-            this.pos++
-        }
-    }
-    
-    next(): string {
-        let c = this.peek; 
-        this.read()
-        return c;
-    } 
-
-    error(msg: string) {
-        while(
-            this.peek &&
-            this.peek != '\n' && 
-            this.peek != '*' && 
-            this.peek != '+' && 
-            this.peek != ')'
-        ){
-            this.next()
-        }
-        throw new Error(msg)
-    }
-
-    expect(d: string) {
-        if (this.peek == d) {
-            this.next()
+            
         } else {
-            try { this.error(d + " expected") } 
-            catch (ex) {
-                if (this.peek == d) {
-                    this.next() 
-                } else{
-                    throw ex
+            throw new Error("Invalid Syntax");
+        }
+    }
+
+    beginFunction(indent: number): FunctionCall{
+        let args: string[] = [];
+        let functionName: string = "";
+        let statement: ASTNode[] = [];
+
+        this.consumeToken("DEF")
+        functionName = String(this.currentToken.value);
+        this.consumeToken("ID")
+        this.consumeToken("LPAREN")
+
+        if (this.currentToken.type != "RPAREN"){
+            for (;;){
+                args.push(String(this.currentToken.value));
+                this.consumeToken("ID")
+                
+                if (this.currentToken.type == "COMMA"){
+                    this.consumeToken("COMMA")
+                } else if (this.currentToken.type == "RPAREN") {
+                    break;
                 }
             }
         }
+
+        this.consumeToken("RPAREN")
+        this.consumeToken("COLON")
+
+        this.consumeToken("NEWLINE")
+
+        statement = this.collectStatements(indent);
+
+        return new FunctionCall(functionName, args, statement);
     }
 
-    factor(): number {
-        if (this.peek == '(') {
-            this.next()
-            let res = this.expr() 
-            this.next() 
-            return res
+
+    ifStructure(indent: number): IfStatement {
+        let statement: ASTNode[] = [];
+
+        this.consumeToken("IF");
+
+        let condition = this.expression(); 
+        
+        this.consumeToken("COLON");
+        this.consumeToken("NEWLINE");
+
+        statement = this.collectStatements(indent);
+        
+        return new IfStatement(condition, statement);
+    }
+
+    whileStructure(indent: number): WhileStatement{
+        let statement: ASTNode[] = [];
+
+        this.consumeToken("WHILE");
+
+        let condition = this.expression(); 
+        
+        this.consumeToken("COLON");
+        this.consumeToken("NEWLINE");
+
+        statement = this.collectStatements(indent);
+        
+        return new WhileStatement(condition, statement);
+    }
+
+    collectStatements(indent: number): ASTNode[] {
+        let statement: ASTNode[] = [];
+        
+        while(!this.endOfFile() && this.currentIndentTabs > indent) {
+            
+            switch(this.tokenType()) { 
+                case "IF": { 
+                   statement.push(this.ifStructure(indent + 1));
+                   break; 
+                }  
+                case "WHILE": { 
+                   //statements; 
+                   statement.push(this.whileStructure(indent + 1));
+                   break; 
+                } 
+                case "RETURN": { 
+                   statement.push(this.return())
+                   break; 
+                } 
+                case "ID": { 
+                    //statements;    
+                    statement.push(this.assignment(indent + 1));
+                    break; 
+                } 
+                default: { 
+                   //statements; 
+                   throw new Error('Somethings wrong');
+                } 
+            }
+            
+            if (this.newLine()){
+                this.consumeToken("NEWLINE");
+            }
+            
+        }
+
+        return statement;
+    }
+
+    return(): Return {
+        let value: ASTNode;
+        
+        this.consumeToken("RETURN");
+        value = this.expression();
+
+        return new Return(value);
+    }
+
+    assignment(indent: number): Assignment{
+        let variable: Variable;
+        let value: ASTNode;
+
+        variable = new Variable(String(this.currentToken.value));
+        this.consumeToken("ID");
+        
+        this.consumeToken("ASSIGN");
+                
+        value = this.expression();
+
+        return new Assignment(variable, value);
+    }
+
+    expression(): ASTNode{
+        let node = this.term();
+
+        return node;
+    }
+
+    term(): ASTNode {
+        let node = this.factor();
+
+        while ([
+            'MULTIPLY', 
+            'DIVIDE', 
+            'PLUS', 
+            'MINUS', 
+            'GREATERTHAN', 
+            'LESSTHAN'
+        ].includes(this.currentToken.type)) {
+            const token = this.currentToken;
+            this.consumeToken(this.currentToken.type);
+            node = new BinOpNode(node, token, this.factor());
+        }
+
+        return node;
+    }
+
+    factor() {
+        const currentToken = this.currentToken;
+
+        if (currentToken.type == "INTEGER"){
+            const returnVal = new NumNode(Number(currentToken.value))
+            this.consumeToken("INTEGER");
+            return returnVal;
+        } else if (currentToken.type == "LPAREN") {
+            this.consumeToken("LPAREN");
+            const result = this.expression();
+            this.consumeToken("RPAREN");
+            return result;
+        } else if (currentToken.type == "ID") {
+            const variableName = String(currentToken.value);
+            this.consumeToken("ID");
+            return new Variable(variableName)
         } else {
-            return this.number()
+            throw new Error("Invalid syntax")
         }
     }
-
-    term(): number {
-        let res: number = this.factor()
-        while (this.peek == '*' || this.peek == '/'){
-            let next_elem: string = this.next()
-            let function_to_execute: CallableFunction = this.eval[next_elem];
-            res = function_to_execute(res, this.factor());
-        }
-        return res
-    }
-
-    binop(min: number): number{
-        let res = this.factor()
-        while (this.peek in this.prec && this.prec[this.peek] >= min){
-            let nextMin: number = this.prec[this.peek] + this.assoc[this.peek] 
-            res = this.eval[this.next()](res, this.binop(nextMin))
-        }
-        return res        
-    }
-
-    split(operator: string, func: CallableFunction) {
-        for (;;) { 
-            try {
-                func()
-            } catch (ex) { }
-
-            if (this.peek == operator) this.next(); 
-            else break 
-        }
-    }
-
-    
-    number(): number { // creates the full number, can be better done with regex
-        let isDigit = () => '0' <= this.peek && this.peek <= '9'
-
-        let n = Number(this.next())
-        while(isDigit()){
-            n = n * 10 + Number(this.next())
-        }
-        return n
-    }
-
-    // expr(ind: number): number {
-    //     let sum = 0 
-    //     this.split('+', () => {
-    //         let prod: number = 1
-    //         this.split('*', () => {
-    //             if (this.peek == '\n' && this.indent > ind) {
-    //                 this.next()
-    //                 prod *= this.expr(this.indent)
-    //                 if (this.peek == '\n' && this.indent == ind) {
-    //                     this.next()
-    //                 }
-    //             } else if (this.peek == '(') {
-    //                 this.next()
-    //                 prod *= this.expr(ind)
-    //                 this.next()
-    //             } else {
-    //                 prod *= this.number()
-    //             }
-    //         })
-    //         sum += prod
-    //     })
-    //     return sum
-    // }
-
-    expr() {
-        // let res = this.term() 
-        // while( this.peek == '+' || this.peek == '-') {
-        //     res = this.eval[this.next()](res, this.term())
-        // }
-        // return res
-        return this.binop(0)
-    }
-
-
-    // expr_ast(ind: number): any[] {
-    //     let output: any[] = ["+"]
-
-    //     this.split('+', () => {
-    //         let local: any[] = ["*"]
-    //         this.split('*', () => {
-    //             if (this.peek == '\n' && this.indent > ind) {
-    //                 this.next()
-    //                 local.push(this.expr(this.indent))
-    //                 if (this.peek == '\n' && this.indent == ind) {
-    //                     this.next()
-    //                 }
-    //             } else if (this.peek == '(') {
-    //                 this.next()
-    //                 local.push(this.expr(ind))
-    //                 this.next()
-    //             } else {
-    //                 local.push(this.number())
-    //             }
-    //         })
-    //         output.push(local)
-    //     })
-    //     return output
-    // }
-
-    parse(text: string) {
-        this.init(text)
-        // let res = this.expr(this.indent)
-        let res = this.expr()
-        return res
-    } 
- 
-    // parse_ast(s: string) {
-    //     this.init(s)
-    //     let res = this.expr_ast(this.indent) 
-
-    //     return res
-    // }
 }

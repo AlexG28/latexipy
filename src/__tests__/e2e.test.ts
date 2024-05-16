@@ -11,7 +11,7 @@ import {
     WhileStatement
 } from "$lib/nodes";
 
-import { Parser } from "$lib/myparser";
+import { Parser } from "$lib/parser";
 import { Lexer } from "$lib/lexer";
 import { expect, test } from 'vitest'
 
