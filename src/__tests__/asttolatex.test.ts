@@ -15,11 +15,27 @@ import { expect, test } from 'vitest'
 import { Converter } from "$lib/asttolatex";
 
 
-test('test function declaration with no arguments', ()=> {
+const dedent = (str: string): string => {
+    return str.split('\n').map(line => line.trimStart()).join('\n');
+}
+
+
+test('create an empty function ', ()=> {
     const ast = new FunctionCall('functionName', [], []);
     const conv = new Converter(ast);
 
     const result = conv.convert();
 
-    expect(result).toEqual("hello there");
+    const expected = dedent(`
+        \\begin{algorithm}
+        \\caption{functionName}
+        \\begin{algorithmic}
+        \\Function{functionName}{}
+
+        \\EndFunction
+        \\end{algorithmic}
+        \\end{algorithm}
+    `);
+
+    expect(result).toEqual(expected);
 })
