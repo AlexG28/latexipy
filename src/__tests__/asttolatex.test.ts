@@ -12,7 +12,7 @@ import {
 } from "$lib/nodes";
 
 import { expect, test } from 'vitest'
-import { Converter } from "$lib/asttolatex";
+import { ASTToLatex } from "$lib/asttolatex";
 
 
 const dedent = (str: string): string => {
@@ -22,7 +22,7 @@ const dedent = (str: string): string => {
 
 test('create an empty function ', ()=> {
     const ast = new FunctionCall('functionName', [], []);
-    const conv = new Converter(ast);
+    const conv = new ASTToLatex(ast);
 
     const result = conv.convert();
 
@@ -37,5 +37,19 @@ test('create an empty function ', ()=> {
         \\end{algorithm}
     `);
 
+    expect(result).toEqual(expected);
+})
+
+
+test('simple integer assignment', ()=> {
+    const assignemnt = new Assignment(
+        new Variable("a"),
+        new NumNode(19)
+    )
+    const ast = new FunctionCall('functionName', [], [assignemnt]);
+    const conv = new ASTToLatex(ast);
+    const result = conv.assignment(assignemnt);
+
+    const expected = `\\State $a \\gets 19$`;
     expect(result).toEqual(expected);
 })

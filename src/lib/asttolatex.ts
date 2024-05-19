@@ -12,7 +12,7 @@ import {
 } from "./nodes";
 
 
-export class Converter{
+export class ASTToLatex{
     outputString: string;
     ast: FunctionCall;
 
@@ -43,9 +43,29 @@ export class Converter{
         `);
     }
 
+    assignment(assignment: Assignment): string {
+        const varName = assignment.variable.name;
+        const varVal = (assignment.value as NumNode).value;
+        return this.dedent(`\\State $${varName} \\gets ${varVal}$`);
+    }
+
 
     convert(): string {
         this.begin();
+
+        this.ast.statements.forEach(item => {
+            switch(item.type){
+                case "Assignment": {
+                    this.outputString += this.assignment(item as Assignment)
+                    break;
+                }
+                default: {
+                    throw new Error('asdfasdf wrong');
+                }
+            }
+
+        })
+
         this.end();
         return this.outputString;
     }
