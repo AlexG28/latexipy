@@ -14,15 +14,21 @@
 
 
 <script>
-
-    import { convert } from './converts'
+    import { Lexer } from "$lib/lexer";
+    import { Parser } from "$lib/parser";
+    import { ASTToLatex } from "$lib/asttolatex"; 
 
     let leftText = '';
     let rightText = '';
 
     function convertText() {
-        console.log('Converted text:', leftText);
-        rightText = convert(leftText)
+      const lexer = new Lexer(leftText);
+      const parser = new Parser(lexer);
+      const ast = parser.beginFunction(0);
+
+      const converter = new ASTToLatex(ast);
+      rightText = converter.convert();
+
     }
 </script>
 
