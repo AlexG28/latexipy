@@ -138,10 +138,39 @@ export class IfStatement extends ASTNode {
         });
 
         const cond = this.condition.toLatex();
+
+
+        let elifLatex = "";
+
+        this.elif.forEach(item => {
+            let cond = item.condition.toLatex(); 
+            let statementLatex = "";
+            item.statements.forEach(statement => {
+                statementLatex += statement.toLatex() + "\n";
+            });
+            elifLatex += dedent(
+            `\\ElsIf{$${cond}$}
+            ${statementLatex}`) + "\n";
+        })
+
         
+        
+        let elseLatex = "";
+        
+        if (this.elseStatements.length > 0){
+            let elseStatements = "";
+            this.elseStatements.forEach(item => {
+                elseStatements += item.toLatex() + "\n";
+            });
+            elseLatex = dedent(`\\Else
+            ${elseStatements}`);
+        }
+
         return dedent(`
             \\If{$${cond}$}
             ${innerStatements}
+            ${elifLatex}
+            ${elseLatex}
             \\EndIf`);
         }
 }

@@ -97,6 +97,8 @@ test('create an empty function with no arguments', ()=> {
         \\If{$sum > 420$}
         \\State $dividend \\gets 0$
         
+
+        
         \\EndIf
         
         \\While{$(sum / 4) * (2 + 3)$}

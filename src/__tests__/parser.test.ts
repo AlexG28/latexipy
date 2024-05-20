@@ -13,7 +13,6 @@ import {
 import { Parser } from "$lib/parser";
 import { Lexer } from "$lib/lexer";
 import { expect, test } from 'vitest'
-import type { elifCondStatement } from "$lib/nodes"
 
 test('test function declaration with no arguments', ()=> {
     const inputText = `def functionName():

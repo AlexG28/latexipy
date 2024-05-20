@@ -25,7 +25,7 @@ test('create an empty function with no arguments', ()=> {
     const expected = dedent(
         `\\Function{functionName}{}
 
-        \\EndFunction`);
+        \\\EndFunction`);
 
     expect(result).toEqual(expected);
 })
@@ -38,7 +38,7 @@ test('create an empty function with multiple arguments', ()=> {
     const expected = dedent(
         `\\Function{functionName}{k,arr1,arr2}
 
-        \\EndFunction`);
+        \\\EndFunction`);
 
     expect(result).toEqual(expected);
 })
@@ -97,7 +97,7 @@ test('simple integer assignment', ()=> {
     )
     const result = assignemnt.toLatex();
 
-    const expected = `\\State $a \\gets 19$`;
+    const expected = `\\\State $a \\\gets 19$`;
     expect(result).toEqual(expected);
 })
 
@@ -124,7 +124,7 @@ test('variable assignment with an expression', ()=> {
     
     const result = assignemnt.toLatex();
     
-    const expected = `\\State $dividend \\gets (sum / 4) * (2 + 3)$`;
+    const expected = `\\\State $dividend \\\gets (sum / 4) * (2 + 3)$`;
     expect(result).toEqual(expected);
 })
 
@@ -134,7 +134,7 @@ test('simple return', ()=> {
     )
     const result = returnNode.toLatex();
 
-    const expected = `\\State \\Return dividend`;
+    const expected = `\\\State \\Return dividend`;
     expect(result).toEqual(expected);
 })
 
@@ -153,9 +153,11 @@ test('simple if statement', ()=> {
     const result = ifNode.toLatex();
 
     const expected = dedent(`
-        \\If{$2 > 1$}
+        \\\If{$2 > 1$}
 
-        \\EndIf`);
+
+
+        \\\EndIf`);
     expect(result).toEqual(expected);
 })
 
@@ -175,18 +177,81 @@ test('if statement with complex condition', ()=> {
         )
     )
     
-    const returnNode = new IfStatement(
+    const ifStatement = new IfStatement(
         condition, 
         [],
         [], 
         []
     )
+    const result = ifStatement.toLatex();
+
+    const expected = dedent(`
+        \\\If{$(sum / 4) * (2 + 3)$}
+
+
+
+        \\\EndIf`);
+    expect(result).toEqual(expected);
+})
+
+
+test('if elif else statements', ()=> {
+    const condition1 = new BinOpNode(
+        new Variable("sum"),
+        new Token("GREATERTHAN", ">"),
+        new NumNode(4)
+    )
+    const condition2 = new BinOpNode(
+        new Variable("num"),
+        new Token("GREATERTHAN", ">"),
+        new Variable("sum"),
+    )
+    
+    const statement1 = new Assignment(
+        new Variable("num"),
+        new NumNode(19)
+    )
+    const statement2 = new Assignment(
+        new Variable("sum"),
+        new NumNode(16)
+    )
+
+    const returnNode = new IfStatement(
+        condition1, 
+        [statement1],
+        [
+            {
+                condition: condition2,
+                statements: [statement1, statement2]
+            },
+            {
+                condition: condition1,
+                statements: [statement2, statement1]
+            }
+        ], 
+        [statement2, statement1, statement2]
+    )
     const result = returnNode.toLatex();
 
     const expected = dedent(`
-        \\If{$(sum / 4) * (2 + 3)$}
-
-        \\EndIf`);
+    \\If{$sum > 4$}
+    \\State $num \\gets 19$
+    
+    \\ElsIf{$num > sum$}
+    \\State $num \\gets 19$
+    \\State $sum \\gets 16$
+    
+    \\ElsIf{$sum > 4$}
+    \\State $sum \\gets 16$
+    \\State $num \\gets 19$
+    
+    
+    \\Else
+    \\State $sum \\gets 16$
+    \\State $num \\gets 19$
+    \\State $sum \\gets 16$
+    
+    \\EndIf`);
     expect(result).toEqual(expected);
 })
 
@@ -215,7 +280,7 @@ test('while statement with complex condition', ()=> {
     const expected = dedent(`
         \\While{$(sum / 4) * (2 + 3)$}
 
-        \\EndWhile`);
+        \\\EndWhile`);
 
     expect(result).toEqual(expected);
 })
