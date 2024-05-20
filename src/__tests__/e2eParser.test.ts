@@ -118,6 +118,8 @@ test('end to end test', ()=> {
     if anotherVar:
         while lastVar > 2:
             lastVar = varName - anotherVar
+    else: 
+        lastVar = 19
     return varName`; 
 
     const lexer = new Lexer(inputText);
@@ -155,6 +157,11 @@ test('end to end test', ()=> {
         )
     );
     
+    const fourthAssignment = new Assignment(
+        var3,
+        new NumNode(19)
+    );
+    
     const whileStatement = new WhileStatement(
         new BinOpNode(
             var3,
@@ -177,7 +184,7 @@ test('end to end test', ()=> {
                     whileStatement
                 ], 
                 [],
-                []
+                [fourthAssignment]
             ),
             new Return(var1)
         ]
