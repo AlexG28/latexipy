@@ -171,6 +171,6 @@ export class Return extends ASTNode {
 
     toLatex(): string {
         const retVal = this.value.toLatex();
-        return `\\State \\Return  ${retVal}`;
+        return `\\State \\Return ${retVal}`;
     }
 }

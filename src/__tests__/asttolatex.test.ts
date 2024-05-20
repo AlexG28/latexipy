@@ -97,3 +97,40 @@ test('simple integer assignment', ()=> {
     const expected = `\\State $a \\gets 19$`;
     expect(result).toEqual(expected);
 })
+
+
+test('variable assignment with an expression', ()=> {
+    const binop = new BinOpNode(
+        new BinOpNode(
+            new Variable("sum"),
+            new Token("DIVIDE", "/"),
+            new NumNode(4)
+        ),
+        new Token("MULTIPLY", "*"),
+        new BinOpNode(
+            new NumNode(2),
+            new Token("PLUS", "+"),
+            new NumNode(3)
+        )
+    )
+    
+    const assignemnt = new Assignment(
+        new Variable("dividend"),
+        binop
+    )
+    
+    const result = assignemnt.toLatex();
+    
+    const expected = `\\State $dividend \\gets (sum / 4) * (2 + 3)$`;
+    expect(result).toEqual(expected);
+})
+
+test('simple return', ()=> {
+    const returnNode = new Return(
+        new Variable("dividend")
+    )
+    const result = returnNode.toLatex();
+
+    const expected = `\\State \\Return dividend`;
+    expect(result).toEqual(expected);
+})
