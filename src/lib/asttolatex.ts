@@ -43,11 +43,11 @@ export class ASTToLatex{
         `);
     }
 
-    assignment(assignment: Assignment): string {
-        const varName = assignment.variable.name;
-        const varVal = (assignment.value as NumNode).value;
-        return this.dedent(`\\State $${varName} \\gets ${varVal}$`);
-    }
+    // generateAssignment(assignment: Assignment): string {
+    //     const varName = assignment.variable.name;
+    //     const varVal = (assignment.value as NumNode).value;
+    //     return this.dedent(`\\State $${varName} \\gets ${varVal}$`);
+    // }
 
 
     convert(): string {
@@ -56,7 +56,7 @@ export class ASTToLatex{
         this.ast.statements.forEach(item => {
             switch(item.type){
                 case "Assignment": {
-                    this.outputString += this.assignment(item as Assignment)
+                    this.outputString += (item as Assignment).toLatex + "\n"
                     break;
                 }
                 default: {

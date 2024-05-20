@@ -41,14 +41,58 @@ test('create an empty function ', ()=> {
 })
 
 
+test('simple binary op with numbers', ()=> {
+    const binop = new BinOpNode(
+        new NumNode(42),
+        new Token("PLUS", "+"),
+        new NumNode(93)
+    )
+    const result = binop.toLatex();
+
+    const expected = `42 + 93`;
+    expect(result).toEqual(expected);
+})
+
+test('simple binary op with numbers and variables', ()=> {
+    const binop = new BinOpNode(
+        new Variable("accumulator"),
+        new Token("MULTIPLY", "*"),
+        new NumNode(2)
+    )
+    const result = binop.toLatex();
+
+    const expected = `accumulator * 2`;
+    expect(result).toEqual(expected);
+})
+
+
+test('nested binary op', ()=> {
+    const binop = new BinOpNode(
+        new BinOpNode(
+            new Variable("sum"),
+            new Token("DIVIDE", "/"),
+            new NumNode(4)
+        ),
+        new Token("MULTIPLY", "*"),
+        new BinOpNode(
+            new NumNode(2),
+            new Token("PLUS", "+"),
+            new NumNode(3)
+        )
+    )
+    const result = binop.toLatex();
+
+    const expected = `(sum / 4) * (2 + 3)`;
+    expect(result).toEqual(expected);
+})
+
+
 test('simple integer assignment', ()=> {
     const assignemnt = new Assignment(
         new Variable("a"),
         new NumNode(19)
     )
-    const ast = new FunctionCall('functionName', [], [assignemnt]);
-    const conv = new ASTToLatex(ast);
-    const result = conv.assignment(assignemnt);
+    const result = assignemnt.toLatex();
 
     const expected = `\\State $a \\gets 19$`;
     expect(result).toEqual(expected);
