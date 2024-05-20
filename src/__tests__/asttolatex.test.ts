@@ -25,7 +25,7 @@ test('create an empty function with no arguments', ()=> {
     const expected = dedent(
         `\\Function{functionName}{}
 
-        \\\EndFunction`);
+        \\EndFunction`);
 
     expect(result).toEqual(expected);
 })
@@ -38,7 +38,7 @@ test('create an empty function with multiple arguments', ()=> {
     const expected = dedent(
         `\\Function{functionName}{k,arr1,arr2}
 
-        \\\EndFunction`);
+        \\EndFunction`);
 
     expect(result).toEqual(expected);
 })
@@ -97,7 +97,7 @@ test('simple integer assignment', ()=> {
     )
     const result = assignemnt.toLatex();
 
-    const expected = `\\\State $a \\\gets 19$`;
+    const expected = `\\State $a \\gets 19$`;
     expect(result).toEqual(expected);
 })
 
@@ -124,7 +124,7 @@ test('variable assignment with an expression', ()=> {
     
     const result = assignemnt.toLatex();
     
-    const expected = `\\\State $dividend \\\gets (sum / 4) * (2 + 3)$`;
+    const expected = `\\State $dividend \\gets (sum / 4) * (2 + 3)$`;
     expect(result).toEqual(expected);
 })
 
@@ -134,7 +134,7 @@ test('simple return', ()=> {
     )
     const result = returnNode.toLatex();
 
-    const expected = `\\\State \\Return dividend`;
+    const expected = `\\State \\Return dividend`;
     expect(result).toEqual(expected);
 })
 
@@ -153,11 +153,11 @@ test('simple if statement', ()=> {
     const result = ifNode.toLatex();
 
     const expected = dedent(`
-        \\\If{$2 > 1$}
+        \\If{$2 > 1$}
 
 
 
-        \\\EndIf`);
+        \\EndIf`);
     expect(result).toEqual(expected);
 })
 
@@ -186,11 +186,11 @@ test('if statement with complex condition', ()=> {
     const result = ifStatement.toLatex();
 
     const expected = dedent(`
-        \\\If{$(sum / 4) * (2 + 3)$}
+        \\If{$(sum / 4) * (2 + 3)$}
 
 
 
-        \\\EndIf`);
+        \\EndIf`);
     expect(result).toEqual(expected);
 })
 
@@ -329,7 +329,7 @@ test('while statement with complex condition', ()=> {
     const expected = dedent(`
         \\While{$(sum / 4) * (2 + 3)$}
 
-        \\\EndWhile`);
+        \\EndWhile`);
 
     expect(result).toEqual(expected);
 })
