@@ -244,7 +244,44 @@ test('test if statement', ()=> {
             new Token("GREATERTHAN", ">"),
             new NumNode(4)
         ), 
+        [],
         []
+    )
+
+    expect(result).toEqual(expected);
+})
+
+
+test('test if else condition', ()=> {
+    const inputText = 
+`if 10 > 4:
+    a=1
+else:
+    a=2
+`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result = parser.ifStructure(0);
+
+    const expected = new IfStatement(
+        new BinOpNode(
+            new NumNode(10),
+            new Token("GREATERTHAN", ">"),
+            new NumNode(4)
+        ), 
+        [
+            new Assignment(
+                new Variable("a"),
+                new NumNode(1)
+            )
+        ],
+        [
+            new Assignment(
+                new Variable("a"),
+                new NumNode(2)
+            )
+        ]
     )
 
     expect(result).toEqual(expected);

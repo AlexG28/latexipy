@@ -43,8 +43,8 @@ test('test tab counting', ()=> {
                         new Variable("b"), 
                         new NumNode(1)
                     )
-                ]
-
+                ], 
+                []
             ),
             new Assignment(new Variable("c"), new NumNode(2)),
             new Assignment(new Variable("d"), new NumNode(3)),
@@ -78,8 +78,8 @@ test('test nested tab counting', ()=> {
                 new Variable("d"), 
                 new NumNode(4)
             )
-        ]
-
+        ], 
+        []
     );
 
     const outerIfStatement = new IfStatement(
@@ -91,8 +91,8 @@ test('test nested tab counting', ()=> {
         [
             innerIfStatement, 
             new Assignment(new Variable("f"), new NumNode(42)),
-        ]
-
+        ],
+        []
     )
 
     const expected = new FunctionCall(
@@ -172,7 +172,8 @@ test('end to end test', ()=> {
                 var2,
                 [
                     whileStatement
-                ]
+                ], 
+                []
             ),
             new Return(var1)
         ]

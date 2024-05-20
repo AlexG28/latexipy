@@ -72,15 +72,15 @@ export class Lexer {
                 }
                 if (id === 'if') {
                     return new Token('IF', id);
-                } else if (id === 'then') {
-                    return new Token('THEN', id);
+                } else if (id === 'elif') {
+                    return new Token('ELIF', id);
                 } else if (id === 'else') {
                     return new Token('ELSE', id);
                 } else if (id === 'while'){
                     return new Token('WHILE', id);
-                } else if (id == 'def') {
+                } else if (id === 'def') {
                     return new Token('DEF', id);
-                } else if (id == 'return') {
+                } else if (id === 'return') {
                     return new Token('RETURN', id);
                 } else {
                     return new Token('ID', id);

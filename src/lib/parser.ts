@@ -85,7 +85,8 @@ export class Parser{
 
     ifStructure(indent: number): IfStatement {
         let statement: ASTNode[] = [];
-
+        let elseStatements: ASTNode[] = []
+        
         this.consumeToken("IF");
 
         let condition = this.expression(); 
@@ -94,8 +95,17 @@ export class Parser{
         this.consumeToken("NEWLINE");
 
         statement = this.collectStatements(indent);
-        
-        return new IfStatement(condition, statement);
+    
+
+
+        if (this.currentToken.type == "ELSE"){
+            this.consumeToken("ELSE")
+            this.consumeToken("COLON")
+            this.consumeToken("NEWLINE")
+            elseStatements = this.collectStatements(indent);
+        }
+
+        return new IfStatement(condition, statement, elseStatements);
     }
 
     whileStructure(indent: number): WhileStatement{

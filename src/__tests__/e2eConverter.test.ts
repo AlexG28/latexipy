@@ -31,7 +31,8 @@ test('create an empty function with no arguments', ()=> {
                 new Variable("dividend"),
                 new NumNode(0)
             )
-        ]
+        ], 
+        []
     )
     
     
