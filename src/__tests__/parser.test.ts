@@ -348,6 +348,8 @@ test('test if elif else condition', ()=> {
 elif 3>2:
     b=2
     c=3
+elif var1<var2:
+    g=19
 else: 
     d=4
 `;
@@ -384,6 +386,19 @@ else:
                         new Variable("c"),
                         new NumNode(3)
                     )
+                ]
+            },
+            {
+                condition: new BinOpNode(
+                    new Variable("var1"),
+                    new Token("LESSTHAN", "<"),
+                    new Variable("var2"),
+                ),
+                statements: [
+                    new Assignment(
+                        new Variable("g"),
+                        new NumNode(19)
+                    ),
                 ]
             }
         ],
