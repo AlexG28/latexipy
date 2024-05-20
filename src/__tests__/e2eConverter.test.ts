@@ -32,6 +32,7 @@ test('create an empty function with no arguments', ()=> {
                 new NumNode(0)
             )
         ], 
+        [],
         []
     )
     

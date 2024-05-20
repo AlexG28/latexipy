@@ -13,7 +13,7 @@ import {
 import { Parser } from "$lib/parser";
 import { Lexer } from "$lib/lexer";
 import { expect, test } from 'vitest'
-
+import type { elifCondStatement } from "$lib/nodes"
 
 test('test function declaration with no arguments', ()=> {
     const inputText = `def functionName():
@@ -245,6 +245,7 @@ test('test if statement', ()=> {
             new NumNode(4)
         ), 
         [],
+        [],
         []
     )
 
@@ -276,10 +277,120 @@ else:
                 new NumNode(1)
             )
         ],
+        [],
         [
             new Assignment(
                 new Variable("a"),
                 new NumNode(2)
+            )
+        ]
+    )
+
+    expect(result).toEqual(expected);
+})
+
+
+test('test if elif condition', ()=> {
+    const inputText = 
+`if 10 > 4:
+    a=1
+elif 3>2:
+    b=2
+    c=3
+`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result = parser.ifStructure(0);
+
+    const expected = new IfStatement(
+        new BinOpNode(
+            new NumNode(10),
+            new Token("GREATERTHAN", ">"),
+            new NumNode(4)
+        ), 
+        [
+            new Assignment(
+                new Variable("a"),
+                new NumNode(1)
+            )
+        ],
+        [
+            {
+                condition: new BinOpNode(
+                    new NumNode(3),
+                    new Token("GREATERTHAN", ">"),
+                    new NumNode(2)
+                ),
+                statements: [
+                    new Assignment(
+                        new Variable("b"),
+                        new NumNode(2)
+                    ),
+                    new Assignment(
+                        new Variable("c"),
+                        new NumNode(3)
+                    )
+                ]
+            }
+        ],
+        []
+    )
+
+    expect(result).toEqual(expected);
+})
+
+
+test('test if elif else condition', ()=> {
+    const inputText = 
+`if 10 > 4:
+    a=1
+elif 3>2:
+    b=2
+    c=3
+else: 
+    d=4
+`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result = parser.ifStructure(0);
+
+    const expected = new IfStatement(
+        new BinOpNode(
+            new NumNode(10),
+            new Token("GREATERTHAN", ">"),
+            new NumNode(4)
+        ), 
+        [
+            new Assignment(
+                new Variable("a"),
+                new NumNode(1)
+            )
+        ],
+        [
+            {
+                condition: new BinOpNode(
+                    new NumNode(3),
+                    new Token("GREATERTHAN", ">"),
+                    new NumNode(2)
+                ),
+                statements: [
+                    new Assignment(
+                        new Variable("b"),
+                        new NumNode(2)
+                    ),
+                    new Assignment(
+                        new Variable("c"),
+                        new NumNode(3)
+                    )
+                ]
+            }
+        ],
+        [
+            new Assignment(
+                new Variable("d"),
+                new NumNode(4)
             )
         ]
     )

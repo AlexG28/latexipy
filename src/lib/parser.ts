@@ -12,6 +12,7 @@ import {
 } from "./nodes";
 
 import { Lexer } from "$lib/lexer";
+import type { elifCondStatement } from "./nodes"
 
 export class Parser{
     lexer: Lexer;
@@ -85,6 +86,7 @@ export class Parser{
 
     ifStructure(indent: number): IfStatement {
         let statement: ASTNode[] = [];
+        let elifcondstatements: elifCondStatement[] = [];
         let elseStatements: ASTNode[] = []
         
         this.consumeToken("IF");
@@ -97,6 +99,24 @@ export class Parser{
         statement = this.collectStatements(indent);
     
 
+        while(this.currentToken.type == "ELIF") {
+            this.consumeToken("ELIF")
+            
+            let newCond = this.expression();
+
+            this.consumeToken("COLON")
+            this.consumeToken("NEWLINE")
+
+            let newStatements = this.collectStatements(indent);
+
+            let newcondstatement: elifCondStatement = {
+                condition: newCond,
+                statements: newStatements
+            }
+
+            elifcondstatements.push(newcondstatement);
+        }
+
 
         if (this.currentToken.type == "ELSE"){
             this.consumeToken("ELSE")
@@ -105,7 +125,7 @@ export class Parser{
             elseStatements = this.collectStatements(indent);
         }
 
-        return new IfStatement(condition, statement, elseStatements);
+        return new IfStatement(condition, statement, elifcondstatements, elseStatements);
     }
 
     whileStructure(indent: number): WhileStatement{

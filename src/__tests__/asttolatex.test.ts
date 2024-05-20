@@ -146,6 +146,7 @@ test('simple if statement', ()=> {
             new Token("GREATERTHAN", ">"),
             new NumNode(1),
         ), 
+        [],
         []
     )
     const result = ifNode.toLatex();
@@ -175,6 +176,7 @@ test('if statement with complex condition', ()=> {
     
     const returnNode = new IfStatement(
         condition, 
+        [],
         []
     )
     const result = returnNode.toLatex();

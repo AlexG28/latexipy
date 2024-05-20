@@ -44,6 +44,7 @@ test('test tab counting', ()=> {
                         new NumNode(1)
                     )
                 ], 
+                [],
                 []
             ),
             new Assignment(new Variable("c"), new NumNode(2)),
@@ -79,6 +80,7 @@ test('test nested tab counting', ()=> {
                 new NumNode(4)
             )
         ], 
+        [],
         []
     );
 
@@ -92,6 +94,7 @@ test('test nested tab counting', ()=> {
             innerIfStatement, 
             new Assignment(new Variable("f"), new NumNode(42)),
         ],
+        [],
         []
     )
 
@@ -173,6 +176,7 @@ test('end to end test', ()=> {
                 [
                     whileStatement
                 ], 
+                [],
                 []
             ),
             new Return(var1)

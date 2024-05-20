@@ -104,18 +104,30 @@ export class FunctionCall extends ASTNode {
         ${innerStatements}
         \\EndFunction`);
     }
-    
 }
+
+export interface elifCondStatement {
+    condition: ASTNode;
+    statements: ASTNode[];
+}
+
 
 export class IfStatement extends ASTNode {
     condition: ASTNode;
     statements: ASTNode[];
+    elif: elifCondStatement[];
     elseStatements: ASTNode[];
 
-    constructor(condition: ASTNode, statements: ASTNode[], elseStatements: ASTNode[]) {
+    constructor(
+        condition: ASTNode, 
+        statements: ASTNode[], 
+        elif: elifCondStatement[],
+        elseStatements: ASTNode[]
+    ) {
         super('IfStatement');
         this.condition = condition;
         this.statements = statements;
+        this.elif = elif;
         this.elseStatements = elseStatements;
     }
 
