@@ -1,6 +1,5 @@
 import { 
-    BinOpNode, 
-    ASTNode, 
+    BinOpNode,  
     Token, 
     NumNode, 
     FunctionCall, 
@@ -141,7 +140,7 @@ test('simple return', ()=> {
 
 
 test('simple if statement', ()=> {
-    const returnNode = new IfStatement(
+    const ifNode = new IfStatement(
         new BinOpNode(
             new NumNode(2),
             new Token("GREATERTHAN", ">"),
@@ -149,7 +148,7 @@ test('simple if statement', ()=> {
         ), 
         []
     )
-    const result = returnNode.toLatex();
+    const result = ifNode.toLatex();
 
     const expected = dedent(`
         \\If{$2 > 1$}
@@ -203,11 +202,11 @@ test('while statement with complex condition', ()=> {
         )
     )
     
-    const returnNode = new WhileStatement(
+    const whileStatement = new WhileStatement(
         condition, 
         []
     )
-    const result = returnNode.toLatex();
+    const result = whileStatement.toLatex();
 
     const expected = dedent(`
         \\While{$(sum / 4) * (2 + 3)$}
