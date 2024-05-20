@@ -152,8 +152,6 @@ export class IfStatement extends ASTNode {
             `\\ElsIf{$${cond}$}
             ${statementLatex}`) + "\n";
         })
-
-        
         
         let elseLatex = "";
         

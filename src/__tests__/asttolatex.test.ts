@@ -255,6 +255,55 @@ test('if elif else statements', ()=> {
     expect(result).toEqual(expected);
 })
 
+test('nested if else statements', ()=> {
+    const condition = new BinOpNode(
+        new Variable("sum"),
+        new Token("GREATERTHAN", ">"),
+        new NumNode(4)
+    )
+    const statement = new Assignment(
+        new Variable("num"),
+        new NumNode(19)
+    )
+
+    const returnNode = new IfStatement(
+        condition, 
+        [],
+        [
+            {
+                condition: condition,
+                statements: [new IfStatement(
+                    condition,
+                    [statement],
+                    [],
+                    [statement]
+                )]
+            }
+        ], 
+        []
+    )
+    const result = returnNode.toLatex();
+
+    const expected = dedent(`
+    \\If{$sum > 4$}
+
+    \\ElsIf{$sum > 4$}
+
+    \\If{$sum > 4$}
+    \\State $num \\gets 19$
+
+
+    \\Else
+    \\State $num \\gets 19$
+
+    \\EndIf
+
+
+
+    \\EndIf`);
+    expect(result).toEqual(expected);
+})
+
 
 test('while statement with complex condition', ()=> {
     const condition = new BinOpNode(
