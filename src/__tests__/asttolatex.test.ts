@@ -134,3 +134,51 @@ test('simple return', ()=> {
     const expected = `\\State \\Return dividend`;
     expect(result).toEqual(expected);
 })
+
+
+test('simple if statement', ()=> {
+    const returnNode = new IfStatement(
+        new BinOpNode(
+            new NumNode(2),
+            new Token("GREATERTHAN", ">"),
+            new NumNode(1),
+        ), 
+        []
+    )
+    const result = returnNode.toLatex();
+
+    const expected = dedent(`
+        \\If{$2 > 1$}
+
+        \\EndIf`);
+    expect(result).toEqual(expected);
+})
+
+
+test('if statement with complex condition', ()=> {
+    const condition = new BinOpNode(
+        new BinOpNode(
+            new Variable("sum"),
+            new Token("DIVIDE", "/"),
+            new NumNode(4)
+        ),
+        new Token("MULTIPLY", "*"),
+        new BinOpNode(
+            new NumNode(2),
+            new Token("PLUS", "+"),
+            new NumNode(3)
+        )
+    )
+    
+    const returnNode = new IfStatement(
+        condition, 
+        []
+    )
+    const result = returnNode.toLatex();
+
+    const expected = dedent(`
+        \\If{$(sum / 4) * (2 + 3)$}
+
+        \\EndIf`);
+    expect(result).toEqual(expected);
+})

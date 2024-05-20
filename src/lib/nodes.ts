@@ -1,3 +1,8 @@
+const dedent = (str: string): string => {
+    return str.split('\n').map(line => line.trimStart()).join('\n');
+}
+
+
 export class Token {
     type: string;
     value: string | number;
@@ -112,11 +117,11 @@ export class IfStatement extends ASTNode {
 
         const cond = this.condition.toLatex();
         
-        return `
-            \\If{${cond}}
+        return dedent(`
+            \\If{$${cond}$}
             ${innerStatements}
-            \\EndIf`;
-    }
+            \\EndIf`);
+        }
 }
 
 export class WhileStatement extends ASTNode {
@@ -136,10 +141,10 @@ export class WhileStatement extends ASTNode {
         })
         
         const condition = (this.condition as BinOpNode).toLatex();
-        return `
+        return dedent(`
             \\While{${condition}}
             ${statements}
-            \\EndWhile`;
+            \\EndWhile`);
     }
 }
 
