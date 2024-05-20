@@ -14,7 +14,6 @@ import { Parser } from "$lib/parser";
 import { Lexer } from "$lib/lexer";
 import { expect, test } from 'vitest'
 
-
 test('test function declaration with no arguments', ()=> {
     const inputText = `def functionName():
     `;
@@ -244,7 +243,170 @@ test('test if statement', ()=> {
             new Token("GREATERTHAN", ">"),
             new NumNode(4)
         ), 
+        [],
+        [],
         []
+    )
+
+    expect(result).toEqual(expected);
+})
+
+
+test('test if else condition', ()=> {
+    const inputText = 
+`if 10 > 4:
+    a=1
+else:
+    a=2
+`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result = parser.ifStructure(0);
+
+    const expected = new IfStatement(
+        new BinOpNode(
+            new NumNode(10),
+            new Token("GREATERTHAN", ">"),
+            new NumNode(4)
+        ), 
+        [
+            new Assignment(
+                new Variable("a"),
+                new NumNode(1)
+            )
+        ],
+        [],
+        [
+            new Assignment(
+                new Variable("a"),
+                new NumNode(2)
+            )
+        ]
+    )
+
+    expect(result).toEqual(expected);
+})
+
+
+test('test if elif condition', ()=> {
+    const inputText = 
+`if 10 > 4:
+    a=1
+elif 3>2:
+    b=2
+    c=3
+`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result = parser.ifStructure(0);
+
+    const expected = new IfStatement(
+        new BinOpNode(
+            new NumNode(10),
+            new Token("GREATERTHAN", ">"),
+            new NumNode(4)
+        ), 
+        [
+            new Assignment(
+                new Variable("a"),
+                new NumNode(1)
+            )
+        ],
+        [
+            {
+                condition: new BinOpNode(
+                    new NumNode(3),
+                    new Token("GREATERTHAN", ">"),
+                    new NumNode(2)
+                ),
+                statements: [
+                    new Assignment(
+                        new Variable("b"),
+                        new NumNode(2)
+                    ),
+                    new Assignment(
+                        new Variable("c"),
+                        new NumNode(3)
+                    )
+                ]
+            }
+        ],
+        []
+    )
+
+    expect(result).toEqual(expected);
+})
+
+
+test('test if elif else condition', ()=> {
+    const inputText = 
+`if 10 > 4:
+    a=1
+elif 3>2:
+    b=2
+    c=3
+elif var1<var2:
+    g=19
+else: 
+    d=4
+`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result = parser.ifStructure(0);
+
+    const expected = new IfStatement(
+        new BinOpNode(
+            new NumNode(10),
+            new Token("GREATERTHAN", ">"),
+            new NumNode(4)
+        ), 
+        [
+            new Assignment(
+                new Variable("a"),
+                new NumNode(1)
+            )
+        ],
+        [
+            {
+                condition: new BinOpNode(
+                    new NumNode(3),
+                    new Token("GREATERTHAN", ">"),
+                    new NumNode(2)
+                ),
+                statements: [
+                    new Assignment(
+                        new Variable("b"),
+                        new NumNode(2)
+                    ),
+                    new Assignment(
+                        new Variable("c"),
+                        new NumNode(3)
+                    )
+                ]
+            },
+            {
+                condition: new BinOpNode(
+                    new Variable("var1"),
+                    new Token("LESSTHAN", "<"),
+                    new Variable("var2"),
+                ),
+                statements: [
+                    new Assignment(
+                        new Variable("g"),
+                        new NumNode(19)
+                    ),
+                ]
+            }
+        ],
+        [
+            new Assignment(
+                new Variable("d"),
+                new NumNode(4)
+            )
+        ]
     )
 
     expect(result).toEqual(expected);

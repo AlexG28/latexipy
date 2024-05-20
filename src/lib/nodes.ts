@@ -104,17 +104,31 @@ export class FunctionCall extends ASTNode {
         ${innerStatements}
         \\EndFunction`);
     }
-    
 }
+
+export interface elifCondStatement {
+    condition: ASTNode;
+    statements: ASTNode[];
+}
+
 
 export class IfStatement extends ASTNode {
     condition: ASTNode;
     statements: ASTNode[];
+    elif: elifCondStatement[];
+    elseStatements: ASTNode[];
 
-    constructor(condition: ASTNode, statements: ASTNode[]) {
+    constructor(
+        condition: ASTNode, 
+        statements: ASTNode[], 
+        elif: elifCondStatement[],
+        elseStatements: ASTNode[]
+    ) {
         super('IfStatement');
         this.condition = condition;
         this.statements = statements;
+        this.elif = elif;
+        this.elseStatements = elseStatements;
     }
 
     toLatex(): string {
@@ -124,10 +138,37 @@ export class IfStatement extends ASTNode {
         });
 
         const cond = this.condition.toLatex();
+
+
+        let elifLatex = "";
+
+        this.elif.forEach(item => {
+            let cond = item.condition.toLatex(); 
+            let statementLatex = "";
+            item.statements.forEach(statement => {
+                statementLatex += statement.toLatex() + "\n";
+            });
+            elifLatex += dedent(
+            `\\ElsIf{$${cond}$}
+            ${statementLatex}`) + "\n";
+        })
         
+        let elseLatex = "";
+        
+        if (this.elseStatements.length > 0){
+            let elseStatements = "";
+            this.elseStatements.forEach(item => {
+                elseStatements += item.toLatex() + "\n";
+            });
+            elseLatex = dedent(`\\Else
+            ${elseStatements}`);
+        }
+
         return dedent(`
             \\If{$${cond}$}
             ${innerStatements}
+            ${elifLatex}
+            ${elseLatex}
             \\EndIf`);
         }
 }

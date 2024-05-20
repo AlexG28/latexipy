@@ -43,8 +43,9 @@ test('test tab counting', ()=> {
                         new Variable("b"), 
                         new NumNode(1)
                     )
-                ]
-
+                ], 
+                [],
+                []
             ),
             new Assignment(new Variable("c"), new NumNode(2)),
             new Assignment(new Variable("d"), new NumNode(3)),
@@ -78,8 +79,9 @@ test('test nested tab counting', ()=> {
                 new Variable("d"), 
                 new NumNode(4)
             )
-        ]
-
+        ], 
+        [],
+        []
     );
 
     const outerIfStatement = new IfStatement(
@@ -91,8 +93,9 @@ test('test nested tab counting', ()=> {
         [
             innerIfStatement, 
             new Assignment(new Variable("f"), new NumNode(42)),
-        ]
-
+        ],
+        [],
+        []
     )
 
     const expected = new FunctionCall(
@@ -115,6 +118,8 @@ test('end to end test', ()=> {
     if anotherVar:
         while lastVar > 2:
             lastVar = varName - anotherVar
+    else: 
+        lastVar = 19
     return varName`; 
 
     const lexer = new Lexer(inputText);
@@ -152,6 +157,11 @@ test('end to end test', ()=> {
         )
     );
     
+    const fourthAssignment = new Assignment(
+        var3,
+        new NumNode(19)
+    );
+    
     const whileStatement = new WhileStatement(
         new BinOpNode(
             var3,
@@ -172,7 +182,9 @@ test('end to end test', ()=> {
                 var2,
                 [
                     whileStatement
-                ]
+                ], 
+                [],
+                [fourthAssignment]
             ),
             new Return(var1)
         ]

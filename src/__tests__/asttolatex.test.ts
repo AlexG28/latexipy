@@ -146,12 +146,16 @@ test('simple if statement', ()=> {
             new Token("GREATERTHAN", ">"),
             new NumNode(1),
         ), 
+        [],
+        [],
         []
     )
     const result = ifNode.toLatex();
 
     const expected = dedent(`
         \\If{$2 > 1$}
+
+
 
         \\EndIf`);
     expect(result).toEqual(expected);
@@ -173,16 +177,130 @@ test('if statement with complex condition', ()=> {
         )
     )
     
+    const ifStatement = new IfStatement(
+        condition, 
+        [],
+        [], 
+        []
+    )
+    const result = ifStatement.toLatex();
+
+    const expected = dedent(`
+        \\If{$(sum / 4) * (2 + 3)$}
+
+
+
+        \\EndIf`);
+    expect(result).toEqual(expected);
+})
+
+
+test('if elif else statements', ()=> {
+    const condition1 = new BinOpNode(
+        new Variable("sum"),
+        new Token("GREATERTHAN", ">"),
+        new NumNode(4)
+    )
+    const condition2 = new BinOpNode(
+        new Variable("num"),
+        new Token("GREATERTHAN", ">"),
+        new Variable("sum"),
+    )
+    
+    const statement1 = new Assignment(
+        new Variable("num"),
+        new NumNode(19)
+    )
+    const statement2 = new Assignment(
+        new Variable("sum"),
+        new NumNode(16)
+    )
+
+    const returnNode = new IfStatement(
+        condition1, 
+        [statement1],
+        [
+            {
+                condition: condition2,
+                statements: [statement1, statement2]
+            },
+            {
+                condition: condition1,
+                statements: [statement2, statement1]
+            }
+        ], 
+        [statement2, statement1, statement2]
+    )
+    const result = returnNode.toLatex();
+
+    const expected = dedent(`
+    \\If{$sum > 4$}
+    \\State $num \\gets 19$
+    
+    \\ElsIf{$num > sum$}
+    \\State $num \\gets 19$
+    \\State $sum \\gets 16$
+    
+    \\ElsIf{$sum > 4$}
+    \\State $sum \\gets 16$
+    \\State $num \\gets 19$
+    
+    
+    \\Else
+    \\State $sum \\gets 16$
+    \\State $num \\gets 19$
+    \\State $sum \\gets 16$
+    
+    \\EndIf`);
+    expect(result).toEqual(expected);
+})
+
+test('nested if else statements', ()=> {
+    const condition = new BinOpNode(
+        new Variable("sum"),
+        new Token("GREATERTHAN", ">"),
+        new NumNode(4)
+    )
+    const statement = new Assignment(
+        new Variable("num"),
+        new NumNode(19)
+    )
+
     const returnNode = new IfStatement(
         condition, 
+        [],
+        [
+            {
+                condition: condition,
+                statements: [new IfStatement(
+                    condition,
+                    [statement],
+                    [],
+                    [statement]
+                )]
+            }
+        ], 
         []
     )
     const result = returnNode.toLatex();
 
     const expected = dedent(`
-        \\If{$(sum / 4) * (2 + 3)$}
+    \\If{$sum > 4$}
 
-        \\EndIf`);
+    \\ElsIf{$sum > 4$}
+
+    \\If{$sum > 4$}
+    \\State $num \\gets 19$
+
+
+    \\Else
+    \\State $num \\gets 19$
+
+    \\EndIf
+
+
+
+    \\EndIf`);
     expect(result).toEqual(expected);
 })
 

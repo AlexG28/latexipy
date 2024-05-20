@@ -19,7 +19,7 @@ const dedent = (str: string): string => {
 }
 
 
-test('create an empty function with no arguments', ()=> {
+test('General test', ()=> {
     const ifNode = new IfStatement(
         new BinOpNode(
             new Variable("sum"),
@@ -31,7 +31,9 @@ test('create an empty function with no arguments', ()=> {
                 new Variable("dividend"),
                 new NumNode(0)
             )
-        ]
+        ], 
+        [],
+        []
     )
     
     
@@ -95,6 +97,8 @@ test('create an empty function with no arguments', ()=> {
         \\If{$sum > 420$}
         \\State $dividend \\gets 0$
         
+
+
         \\EndIf
         
         \\While{$(sum / 4) * (2 + 3)$}
