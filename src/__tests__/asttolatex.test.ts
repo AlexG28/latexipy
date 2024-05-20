@@ -12,7 +12,6 @@ import {
 } from "$lib/nodes";
 
 import { expect, test } from 'vitest'
-import { ASTToLatex } from "$lib/asttolatex";
 
 
 const dedent = (str: string): string => {
@@ -20,22 +19,27 @@ const dedent = (str: string): string => {
 }
 
 
-test('create an empty function ', ()=> {
+test('create an empty function with no arguments', ()=> {
     const ast = new FunctionCall('functionName', [], []);
-    const conv = new ASTToLatex(ast);
+    const result = ast.toLatex();
 
-    const result = conv.convert();
+    const expected = dedent(
+        `\\Function{functionName}{}
 
-    const expected = dedent(`
-        \\begin{algorithm}
-        \\caption{functionName}
-        \\begin{algorithmic}
-        \\Function{functionName}{}
+        \\EndFunction`);
 
-        \\EndFunction
-        \\end{algorithmic}
-        \\end{algorithm}
-    `);
+    expect(result).toEqual(expected);
+})
+
+
+test('create an empty function with multiple arguments', ()=> {
+    const ast = new FunctionCall('functionName', ["k", "arr1", "arr2"], []);
+    const result = ast.toLatex();
+
+    const expected = dedent(
+        `\\Function{functionName}{k,arr1,arr2}
+
+        \\EndFunction`);
 
     expect(result).toEqual(expected);
 })
@@ -180,5 +184,35 @@ test('if statement with complex condition', ()=> {
         \\If{$(sum / 4) * (2 + 3)$}
 
         \\EndIf`);
+    expect(result).toEqual(expected);
+})
+
+
+test('while statement with complex condition', ()=> {
+    const condition = new BinOpNode(
+        new BinOpNode(
+            new Variable("sum"),
+            new Token("DIVIDE", "/"),
+            new NumNode(4)
+        ),
+        new Token("MULTIPLY", "*"),
+        new BinOpNode(
+            new NumNode(2),
+            new Token("PLUS", "+"),
+            new NumNode(3)
+        )
+    )
+    
+    const returnNode = new WhileStatement(
+        condition, 
+        []
+    )
+    const result = returnNode.toLatex();
+
+    const expected = dedent(`
+        \\While{$(sum / 4) * (2 + 3)$}
+
+        \\EndWhile`);
+
     expect(result).toEqual(expected);
 })

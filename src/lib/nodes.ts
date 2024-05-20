@@ -94,7 +94,15 @@ export class FunctionCall extends ASTNode {
     }
 
     toLatex(): string {
-        return "";
+        let innerStatements = "";
+        this.statements.forEach(item => {
+            innerStatements += item.toLatex() + "\n";
+        });
+        
+        return dedent(
+        `\\Function{functionName}{${this.arguments}}
+        ${innerStatements}
+        \\EndFunction`);
     }
     
 }
@@ -142,7 +150,7 @@ export class WhileStatement extends ASTNode {
         
         const condition = (this.condition as BinOpNode).toLatex();
         return dedent(`
-            \\While{${condition}}
+            \\While{$${condition}$}
             ${statements}
             \\EndWhile`);
     }
