@@ -72,8 +72,8 @@ test('test integer variable assignment', ()=> {
 
 test('test function with an integer assignment', ()=> {
     const inputText = 
-`def functionName(): 
-    varName = 14`;  
+        `def functionName(): 
+            varName = 14`;  
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
@@ -87,9 +87,9 @@ test('test function with an integer assignment', ()=> {
 
 test('test function with multiple integer assignments', ()=> {
     const inputText = 
-`def functionName(): 
-    varName = 14
-    anotherVar = 6969`;
+        `def functionName(): 
+            varName = 14
+            anotherVar = 6969`;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
