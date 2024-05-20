@@ -1,3 +1,4 @@
+import { ASTToLatex } from "$lib/asttolatex";
 import { 
     BinOpNode, 
     Token, 
@@ -77,15 +78,19 @@ test('create an empty function with no arguments', ()=> {
     )
     
     const ast = new FunctionCall(
-        'functionName', 
+        'calculateDividendFromSum', 
         ["sum"], 
         [ifNode, whileStatement, returnNode]
     );
     
-    const result = ast.toLatex();
+    const converter = new ASTToLatex(ast);
+    const result = converter.convert();
 
     const expected = dedent(
-        `\\Function{functionName}{sum}
+        `\\begin{algorithm}
+        \\caption{calculateDividendFromSum}
+        \\begin{algorithmic}
+        \\Function{calculateDividendFromSum}{sum}
 
         \\If{$sum > 420$}
         \\State $dividend \\gets 0$
@@ -98,8 +103,9 @@ test('create an empty function with no arguments', ()=> {
         \\EndWhile
         \\State \\Return dividend
         
-        \\EndFunction`);
-
+        \\EndFunction
+        \\end{algorithmic}
+        \\end{algorithm}`);
 
     expect(result).toEqual(expected);
 })

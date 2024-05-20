@@ -100,7 +100,7 @@ export class FunctionCall extends ASTNode {
         });
         
         return dedent(
-        `\\Function{functionName}{${this.arguments}}
+        `\\Function{${this.name}}{${this.arguments}}
         ${innerStatements}
         \\EndFunction`);
     }
