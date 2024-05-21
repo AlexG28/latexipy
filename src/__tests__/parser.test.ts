@@ -7,7 +7,8 @@ import {
     Variable,
     Return, 
     IfStatement,
-    WhileStatement
+    WhileStatement,
+    ExternalFunction
 } from "$lib/nodes";
 
 import { Parser } from "$lib/parser";
@@ -414,7 +415,7 @@ else:
 
 
 test('test while statement', ()=> {
-    const inputText = `while 10 > 4:
+    const inputText = `while test(val) > 4:
     `;
 
     const lexer = new Lexer(inputText);
@@ -423,11 +424,46 @@ test('test while statement', ()=> {
 
     const expected = new WhileStatement(
         new BinOpNode(
-            new NumNode(10),
+            new ExternalFunction(
+                "test",
+                ["val"]
+            ),
             new Token("GREATERTHAN", ">"),
             new NumNode(4)
         ), 
         []
+    )
+
+    expect(result).toEqual(expected);
+})
+
+
+test('test external function call', ()=> {
+    const inputText = `a = perform()`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result = parser.assignment(0);
+
+    const expected = new Assignment(
+        new Variable("a"), 
+        new ExternalFunction("perform", [])
+    )
+
+    expect(result).toEqual(expected);
+})
+
+
+test('test external function call with arguments', ()=> {
+    const inputText = `delta = hyperLuminar(time, distance)`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result = parser.assignment(0);
+
+    const expected = new Assignment(
+        new Variable("delta"), 
+        new ExternalFunction("hyperLuminar", ["time", "distance"])
     )
 
     expect(result).toEqual(expected);

@@ -12,7 +12,7 @@ import {
 } from "./nodes";
 
 import { Lexer } from "$lib/lexer";
-import type { elifCondStatement } from "./nodes"
+import { ExternalFunction, type elifCondStatement } from "./nodes"
 
 export class Parser{
     lexer: Lexer;
@@ -154,7 +154,6 @@ export class Parser{
                    break; 
                 }  
                 case "WHILE": { 
-                   //statements; 
                    statement.push(this.whileStructure(indent + 1));
                    break; 
                 } 
@@ -163,12 +162,10 @@ export class Parser{
                    break; 
                 } 
                 case "ID": { 
-                    //statements;    
                     statement.push(this.assignment(indent + 1));
                     break; 
                 } 
                 default: { 
-                   //statements; 
                    throw new Error('Somethings wrong');
                 } 
             }
@@ -203,6 +200,32 @@ export class Parser{
         value = this.expression();
 
         return new Assignment(variable, value);
+    }
+
+    variableOrFunction(currentToken: Token): Variable | ExternalFunction{
+        const name = String(currentToken.value);
+        this.consumeToken("ID");
+        
+        if (this.tokenType() == "LPAREN"){
+            let args: string[] = [];
+            this.consumeToken("LPAREN")
+            if (this.tokenType() != "RPAREN"){
+                for (;;){
+                    args.push(String(this.currentToken.value));
+                    this.consumeToken("ID")
+                    
+                    if (this.tokenType() == "COMMA"){
+                        this.consumeToken("COMMA")
+                    } else if (this.tokenType() == "RPAREN") {
+                        break;
+                    }
+                }
+            }
+            this.consumeToken("RPAREN")
+            return new ExternalFunction(name, args);
+        } else {
+            return new Variable(name)
+        }
     }
 
     expression(): ASTNode{
@@ -243,9 +266,7 @@ export class Parser{
             this.consumeToken("RPAREN");
             return result;
         } else if (currentToken.type == "ID") {
-            const variableName = String(currentToken.value);
-            this.consumeToken("ID");
-            return new Variable(variableName)
+            return this.variableOrFunction(currentToken);
         } else {
             throw new Error("Invalid syntax")
         }
