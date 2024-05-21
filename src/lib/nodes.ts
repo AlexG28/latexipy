@@ -81,6 +81,22 @@ export class Variable extends ASTNode{
     }
 }
 
+export class ExternalFunction extends ASTNode{
+    functionName: string; 
+    args: string[];
+
+    constructor(functionName: string, args: string[]){
+        super("ExternalFunction")
+        this.functionName = functionName;
+        this.args = args;
+    }
+
+    toLatex(): string {
+        return `\\Call{${this.functionName}}{${this.args}}`;
+    }
+}
+
+
 export class FunctionCall extends ASTNode {
     name: string; 
     arguments: string[];
@@ -228,3 +244,4 @@ export class Return extends ASTNode {
         return `\\State \\Return ${retVal}`;
     }
 }
+
