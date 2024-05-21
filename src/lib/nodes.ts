@@ -92,7 +92,7 @@ export class ExternalFunction extends ASTNode{
     }
 
     toLatex(): string {
-        return `\\State \\Call{${this.functionName}}{${this.args}}`;
+        return `\\Call{${this.functionName}}{${this.args}}`;
     }
 }
 

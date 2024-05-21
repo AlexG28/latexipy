@@ -345,6 +345,6 @@ test('external function call', ()=> {
 
     const result = externalFunction.toLatex();
 
-    const expected = dedent(`\\State \\Call{max}{num1,num2}`);
+    const expected = dedent(`\\Call{max}{num1,num2}`);
     expect(result).toEqual(expected);
 })
