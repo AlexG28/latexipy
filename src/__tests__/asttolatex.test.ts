@@ -7,7 +7,8 @@ import {
     Variable,
     Return, 
     IfStatement,
-    WhileStatement
+    WhileStatement,
+    ExternalFunction
 } from "$lib/nodes";
 
 import { expect, test } from 'vitest'
@@ -331,5 +332,19 @@ test('while statement with complex condition', ()=> {
 
         \\EndWhile`);
 
+    expect(result).toEqual(expected);
+})
+
+
+test('external function call', ()=> {
+    
+    const externalFunction = new ExternalFunction(
+        "max",
+        ["num1", "num2"]
+    )
+
+    const result = externalFunction.toLatex();
+
+    const expected = dedent(`\\State \\Call{max}{num1,num2}`);
     expect(result).toEqual(expected);
 })
