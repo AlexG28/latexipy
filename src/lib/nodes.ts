@@ -227,6 +227,34 @@ export class ForLoop extends ASTNode{
 
 
     toLatex(): string {
+        if (this.rangeExpression instanceof Variable || this.rangeExpression.functionName != "range"){
+            return dedent(`
+            \\For{$${this.index.toLatex()}$ in $${this.rangeExpression.toLatex()}$}
+            ${this.statements}
+            \\EndFor`);
+        } 
+
+        if (this.rangeExpression.functionName == "range"){
+            if(this.rangeExpression.args.length == 1){
+                const end = this.rangeExpression.args[0]
+                
+                return dedent(`
+                \\For{$${this.index.toLatex()} = 0, \\dots, ${end}$}
+                ${this.statements}
+                \\EndFor`);
+
+            } else if(this.rangeExpression.args.length == 2){
+                const start = this.rangeExpression.args[0]
+                const end = this.rangeExpression.args[1]
+                
+                return dedent(`
+                \\For{$${this.index.toLatex()} = ${start}, \\dots, ${end}$}
+                ${this.statements}
+                \\EndFor`);
+            }
+        } 
+        
+        
         return ""
     }
 }

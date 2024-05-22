@@ -8,7 +8,8 @@ import {
     Return, 
     IfStatement,
     WhileStatement,
-    ExternalFunction
+    ExternalFunction,
+    ForLoop
 } from "$lib/nodes";
 
 import { expect, test } from 'vitest'
@@ -346,5 +347,68 @@ test('external function call', ()=> {
     const result = externalFunction.toLatex();
 
     const expected = dedent(`\\Call{max}{num1,num2}`);
+    expect(result).toEqual(expected);
+})
+
+
+test('test for loop with range with start and end', ()=> {
+    
+    const externalFunction = new ExternalFunction(
+        "range",
+        ["start", "end"]
+    )
+
+    const forloop = new ForLoop(
+        new Variable("i"), 
+        externalFunction, 
+        []
+    )
+
+    const result = forloop.toLatex();
+
+    const expected = dedent(`
+    \\For{$i = start, \\dots, end$}
+
+    \\EndFor`);
+    expect(result).toEqual(expected);
+})
+
+test('test for loop with range with end', ()=> {
+    
+    const externalFunction = new ExternalFunction(
+        "range",
+        ["end"]
+    )
+
+    const forloop = new ForLoop(
+        new Variable("i"), 
+        externalFunction, 
+        []
+    )
+
+    const result = forloop.toLatex();
+
+    const expected = dedent(`
+    \\For{$i = 0, \\dots, end$}
+
+    \\EndFor`);
+    expect(result).toEqual(expected);
+})
+
+test('test for loop with object', ()=> {
+    const forloop = new ForLoop(
+        new Variable("car"), 
+        new Variable("cars"), 
+        []
+    )
+
+    const result = forloop.toLatex();
+
+    console.log(result)
+
+    const expected = dedent(`
+    \\For{$car$ in $cars$}
+
+    \\EndFor`);
     expect(result).toEqual(expected);
 })
