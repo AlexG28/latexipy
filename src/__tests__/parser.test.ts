@@ -8,7 +8,8 @@ import {
     Return, 
     IfStatement,
     WhileStatement,
-    ExternalFunction
+    ExternalFunction,
+    ForLoop
 } from "$lib/nodes";
 
 import { Parser } from "$lib/parser";
@@ -464,6 +465,44 @@ test('test external function call with arguments', ()=> {
     const expected = new Assignment(
         new Variable("delta"), 
         new ExternalFunction("hyperLuminar", ["time", "distance"])
+    )
+
+    expect(result).toEqual(expected);
+})
+
+
+test('test for loop with range', ()=> {
+    const inputText = `for i in range(start, end):
+    `;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result = parser.forStructure(0);
+
+    const expected = new ForLoop(
+        new Variable("i"), 
+        new ExternalFunction(
+            "range", 
+            ["start", "end"]
+        ), 
+        []
+    )
+
+    expect(result).toEqual(expected);
+})
+
+test('test for loop variable', ()=> {
+    const inputText = `for elem in elements:
+    `;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result = parser.forStructure(0);
+
+    const expected = new ForLoop(
+        new Variable("elem"), 
+        new Variable("elements"), 
+        []
     )
 
     expect(result).toEqual(expected);

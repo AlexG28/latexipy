@@ -8,7 +8,8 @@ import {
     Variable,
     Return,
     IfStatement,
-    WhileStatement
+    WhileStatement, 
+    ForLoop
 } from "./nodes";
 
 import { Lexer } from "$lib/lexer";
@@ -143,6 +144,29 @@ export class Parser{
         return new WhileStatement(condition, statement);
     }
 
+    forStructure(indent: number): ForLoop{
+        let statements: ASTNode[] = [];
+        let index = "";
+        
+        this.consumeToken("FOR");
+        index = String(this.currentToken.value);
+        this.consumeToken("ID");
+    
+        this.consumeToken("IN");
+
+        let func = this.variableOrFunction();
+        this.consumeToken("COLON");
+        this.consumeToken("NEWLINE");
+
+        statements = this.collectStatements(indent);
+
+        return new ForLoop(
+            new Variable(index), 
+            func, 
+            statements
+        )
+    }
+
     collectStatements(indent: number): ASTNode[] {
         let statement: ASTNode[] = [];
         
@@ -157,6 +181,10 @@ export class Parser{
                    statement.push(this.whileStructure(indent + 1));
                    break; 
                 } 
+                case "FOR": {
+                    statement.push(this.forStructure(indent + 1))
+                    break;
+                }
                 case "RETURN": { 
                    statement.push(this.return())
                    break; 
@@ -202,8 +230,8 @@ export class Parser{
         return new Assignment(variable, value);
     }
 
-    variableOrFunction(currentToken: Token): Variable | ExternalFunction{
-        const name = String(currentToken.value);
+    variableOrFunction(): Variable | ExternalFunction{
+        const name = String(this.currentToken.value);
         this.consumeToken("ID");
         
         if (this.tokenType() == "LPAREN"){
@@ -266,7 +294,7 @@ export class Parser{
             this.consumeToken("RPAREN");
             return result;
         } else if (currentToken.type == "ID") {
-            return this.variableOrFunction(currentToken);
+            return this.variableOrFunction();
         } else {
             throw new Error("Invalid syntax")
         }

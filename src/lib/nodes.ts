@@ -213,6 +213,52 @@ export class WhileStatement extends ASTNode {
     }
 }
 
+export class ForLoop extends ASTNode{
+    index: Variable;
+    rangeExpression: ExternalFunction | Variable;
+    statements: ASTNode[];
+
+    constructor(index: Variable, range: ExternalFunction | Variable, statements: ASTNode[]){
+        super("ForLoop")
+        this.index = index; 
+        this.rangeExpression = range; 
+        this.statements = statements;
+    }
+
+
+    toLatex(): string {
+
+        let statements = "";
+        this.statements.forEach(item => {
+            statements += item.toLatex() + "\n";
+        })
+
+        if (this.rangeExpression instanceof ExternalFunction && this.rangeExpression.functionName == "range"){
+            if(this.rangeExpression.args.length == 1){
+                const end = this.rangeExpression.args[0]
+                
+                return dedent(`
+                \\For{$${this.index.toLatex()} = 0, \\dots, ${end}$}
+                ${statements}
+                \\EndFor`);
+
+            } else if(this.rangeExpression.args.length == 2){
+                const start = this.rangeExpression.args[0]
+                const end = this.rangeExpression.args[1]
+                
+                return dedent(`
+                \\For{$${this.index.toLatex()} = ${start}, \\dots, ${end}$}
+                ${statements}
+                \\EndFor`);
+            }
+        } 
+        return dedent(`
+        \\For{$${this.index.toLatex()}$ in $${this.rangeExpression.toLatex()}$}
+        ${statements}
+        \\EndFor`);
+    }
+}
+
 
 export class Assignment extends ASTNode {
     variable: Variable; 
