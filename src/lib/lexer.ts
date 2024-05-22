@@ -82,6 +82,10 @@ export class Lexer {
                     return new Token('DEF', id);
                 } else if (id === 'return') {
                     return new Token('RETURN', id);
+                } else if (id === 'for') {
+                    return new Token('FOR', id);
+                } else if (id === 'in') {
+                    return new Token('IN', id);
                 } else {
                     return new Token('ID', id);
                 }

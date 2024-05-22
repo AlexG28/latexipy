@@ -213,6 +213,24 @@ export class WhileStatement extends ASTNode {
     }
 }
 
+export class ForLoop extends ASTNode{
+    index: Variable;
+    rangeExpression: ExternalFunction | Variable;
+    statements: ASTNode[];
+
+    constructor(index: Variable, range: ExternalFunction | Variable, statements: ASTNode[]){
+        super("ForLoop")
+        this.index = index; 
+        this.rangeExpression = range; 
+        this.statements = statements;
+    }
+
+
+    toLatex(): string {
+        return ""
+    }
+}
+
 
 export class Assignment extends ASTNode {
     variable: Variable; 
