@@ -227,10 +227,16 @@ export class ForLoop extends ASTNode{
 
 
     toLatex(): string {
+
+        let statements = "";
+        this.statements.forEach(item => {
+            statements += item.toLatex() + "\n";
+        })
+
         if (this.rangeExpression instanceof Variable || this.rangeExpression.functionName != "range"){
             return dedent(`
             \\For{$${this.index.toLatex()}$ in $${this.rangeExpression.toLatex()}$}
-            ${this.statements}
+            ${statements}
             \\EndFor`);
         } 
 
@@ -240,7 +246,7 @@ export class ForLoop extends ASTNode{
                 
                 return dedent(`
                 \\For{$${this.index.toLatex()} = 0, \\dots, ${end}$}
-                ${this.statements}
+                ${statements}
                 \\EndFor`);
 
             } else if(this.rangeExpression.args.length == 2){
@@ -249,7 +255,7 @@ export class ForLoop extends ASTNode{
                 
                 return dedent(`
                 \\For{$${this.index.toLatex()} = ${start}, \\dots, ${end}$}
-                ${this.statements}
+                ${statements}
                 \\EndFor`);
             }
         } 
