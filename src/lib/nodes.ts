@@ -233,14 +233,7 @@ export class ForLoop extends ASTNode{
             statements += item.toLatex() + "\n";
         })
 
-        if (this.rangeExpression instanceof Variable || this.rangeExpression.functionName != "range"){
-            return dedent(`
-            \\For{$${this.index.toLatex()}$ in $${this.rangeExpression.toLatex()}$}
-            ${statements}
-            \\EndFor`);
-        } 
-
-        if (this.rangeExpression.functionName == "range"){
+        if (this.rangeExpression instanceof ExternalFunction && this.rangeExpression.functionName == "range"){
             if(this.rangeExpression.args.length == 1){
                 const end = this.rangeExpression.args[0]
                 
@@ -259,9 +252,10 @@ export class ForLoop extends ASTNode{
                 \\EndFor`);
             }
         } 
-        
-        
-        return ""
+        return dedent(`
+        \\For{$${this.index.toLatex()}$ in $${this.rangeExpression.toLatex()}$}
+        ${statements}
+        \\EndFor`);
     }
 }
 
