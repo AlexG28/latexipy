@@ -341,7 +341,7 @@ test('external function call', ()=> {
     
     const externalFunction = new ExternalFunction(
         "max",
-        ["num1", "num2"]
+        [new Variable("num1"), new Variable("num2")]
     )
 
     const result = externalFunction.toLatex();
@@ -355,7 +355,7 @@ test('test for loop with range with start and end', ()=> {
     
     const externalFunction = new ExternalFunction(
         "range",
-        ["start", "end"]
+        [new Variable("start"), new Variable("end")]
     )
 
     const forloop = new ForLoop(
@@ -377,7 +377,7 @@ test('test for loop with range with end', ()=> {
     
     const externalFunction = new ExternalFunction(
         "range",
-        ["end"]
+        [new Variable("end")]
     )
 
     const forloop = new ForLoop(
@@ -403,8 +403,6 @@ test('test for loop with object', ()=> {
     )
 
     const result = forloop.toLatex();
-
-    console.log(result)
 
     const expected = dedent(`
     \\For{$car$ in $cars$}

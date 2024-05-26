@@ -92,7 +92,13 @@ export class ExternalFunction extends ASTNode{
     }
 
     toLatex(): string {
-        return `\\Call{${this.functionName}}{${this.args}}`;
+        // let argsLatex = "";
+        // this.args.forEach(arg => {
+        //     argsLatex += arg.toLatex() + ",";
+        // })
+
+        let argsLatex = this.args.map(arg => arg.toLatex()).join(',');
+        return `\\Call{${this.functionName}}{${argsLatex}}`;
     }
 }
 
@@ -238,7 +244,7 @@ export class ForLoop extends ASTNode{
                 const end = this.rangeExpression.args[0]
                 
                 return dedent(`
-                \\For{$${this.index.toLatex()} = 0, \\dots, ${end}$}
+                \\For{$${this.index.toLatex()} = 0, \\dots, ${end.toLatex()}$}
                 ${statements}
                 \\EndFor`);
 
@@ -247,7 +253,7 @@ export class ForLoop extends ASTNode{
                 const end = this.rangeExpression.args[1]
                 
                 return dedent(`
-                \\For{$${this.index.toLatex()} = ${start}, \\dots, ${end}$}
+                \\For{$${this.index.toLatex()} = ${start.toLatex()}, \\dots, ${end.toLatex()}$}
                 ${statements}
                 \\EndFor`);
             }
