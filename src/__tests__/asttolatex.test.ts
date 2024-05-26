@@ -238,21 +238,17 @@ test('if elif else statements', ()=> {
     const expected = dedent(`
     \\If{$sum > 4$}
     \\State $num \\gets 19$
-    
     \\ElsIf{$num > sum$}
     \\State $num \\gets 19$
     \\State $sum \\gets 16$
-    
     \\ElsIf{$sum > 4$}
     \\State $sum \\gets 16$
     \\State $num \\gets 19$
-    
     
     \\Else
     \\State $sum \\gets 16$
     \\State $num \\gets 19$
     \\State $sum \\gets 16$
-    
     \\EndIf`);
     expect(result).toEqual(expected);
 })
@@ -294,12 +290,9 @@ test('nested if else statements', ()=> {
     \\If{$sum > 4$}
     \\State $num \\gets 19$
 
-
     \\Else
     \\State $num \\gets 19$
-
     \\EndIf
-
 
 
     \\EndIf`);

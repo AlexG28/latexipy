@@ -98,15 +98,12 @@ test('General test', ()=> {
         \\State $dividend \\gets 0$
         
 
-
         \\EndIf
         
         \\While{$(sum / 4) * (2 + 3)$}
         \\State $dividend \\gets (sum / 4) * (2 + 3)$
-        
         \\EndWhile
         \\State \\Return dividend
-        
         \\EndFunction
         \\end{algorithmic}
         \\end{algorithm}`);
