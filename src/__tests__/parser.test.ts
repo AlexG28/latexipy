@@ -427,7 +427,7 @@ test('test while statement', ()=> {
         new BinOpNode(
             new ExternalFunction(
                 "test",
-                ["val"]
+                [new Variable("val")]
             ),
             new Token("GREATERTHAN", ">"),
             new NumNode(4)
@@ -464,7 +464,34 @@ test('test external function call with arguments', ()=> {
 
     const expected = new Assignment(
         new Variable("delta"), 
-        new ExternalFunction("hyperLuminar", ["time", "distance"])
+        new ExternalFunction("hyperLuminar", [new Variable("time"), new Variable("distance")])
+    )
+
+    expect(result).toEqual(expected);
+})
+
+test('test external function call with expression arguments', ()=> {
+    const inputText = `delta = hyperLuminar(1+var3,func(2))`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result = parser.assignment(0);
+
+    const arg1 = new BinOpNode(
+        new NumNode(1), 
+        new Token("PLUS", "+"), 
+        new Variable("var3")
+    ); 
+    const arg2 = new ExternalFunction(
+        "func", 
+        [new NumNode(2)]
+    )
+    const expected = new Assignment(
+        new Variable("delta"),
+        new ExternalFunction(
+            "hyperLuminar", 
+            [arg1, arg2]
+        )        
     )
 
     expect(result).toEqual(expected);
@@ -483,7 +510,7 @@ test('test for loop with range', ()=> {
         new Variable("i"), 
         new ExternalFunction(
             "range", 
-            ["start", "end"]
+            [new Variable("start"), new Variable("end")]
         ), 
         []
     )

@@ -9,11 +9,12 @@ import {
     Return,
     IfStatement,
     WhileStatement, 
-    ForLoop
+    ForLoop,
+    ExternalFunction
 } from "./nodes";
 
 import { Lexer } from "$lib/lexer";
-import { ExternalFunction, type elifCondStatement } from "./nodes"
+import { type elifCondStatement } from "./nodes"
 
 export class Parser{
     lexer: Lexer;
@@ -230,27 +231,30 @@ export class Parser{
         return new Assignment(variable, value);
     }
 
+    functionArguments(name: string): ExternalFunction{
+        let args: ASTNode[] = [];
+        this.consumeToken("LPAREN")
+        if (this.tokenType() != "RPAREN"){
+            for (;;){
+                args.push(this.expression())
+                
+                if (this.tokenType() == "COMMA"){
+                    this.consumeToken("COMMA")
+                } else if (this.tokenType() == "RPAREN") {
+                    break;
+                }
+            }
+        }
+        this.consumeToken("RPAREN")
+        return new ExternalFunction(name, args);
+    }
+
     variableOrFunction(): Variable | ExternalFunction{
         const name = String(this.currentToken.value);
         this.consumeToken("ID");
         
         if (this.tokenType() == "LPAREN"){
-            let args: string[] = [];
-            this.consumeToken("LPAREN")
-            if (this.tokenType() != "RPAREN"){
-                for (;;){
-                    args.push(String(this.currentToken.value));
-                    this.consumeToken("ID")
-                    
-                    if (this.tokenType() == "COMMA"){
-                        this.consumeToken("COMMA")
-                    } else if (this.tokenType() == "RPAREN") {
-                        break;
-                    }
-                }
-            }
-            this.consumeToken("RPAREN")
-            return new ExternalFunction(name, args);
+            return this.functionArguments(name);
         } else {
             return new Variable(name)
         }

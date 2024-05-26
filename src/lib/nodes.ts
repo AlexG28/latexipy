@@ -83,9 +83,9 @@ export class Variable extends ASTNode{
 
 export class ExternalFunction extends ASTNode{
     functionName: string; 
-    args: string[];
+    args: ASTNode[];
 
-    constructor(functionName: string, args: string[]){
+    constructor(functionName: string, args: ASTNode[]){
         super("ExternalFunction")
         this.functionName = functionName;
         this.args = args;
