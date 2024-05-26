@@ -27,7 +27,6 @@ test('global system test', ()=> {
         \\begin{algorithmic}
         \\Function{increaseDividend}{}
         \\State $dividend \\gets 28$
-
         \\EndFunction
         \\end{algorithmic}
         \\end{algorithm}`);

@@ -83,16 +83,17 @@ export class Variable extends ASTNode{
 
 export class ExternalFunction extends ASTNode{
     functionName: string; 
-    args: string[];
+    args: ASTNode[];
 
-    constructor(functionName: string, args: string[]){
+    constructor(functionName: string, args: ASTNode[]){
         super("ExternalFunction")
         this.functionName = functionName;
         this.args = args;
     }
 
     toLatex(): string {
-        return `\\Call{${this.functionName}}{${this.args}}`;
+        let argsLatex = this.args.map(arg => arg.toLatex()).join(',');
+        return `\\Call{${this.functionName}}{${argsLatex}}`;
     }
 }
 
@@ -110,11 +111,7 @@ export class FunctionCall extends ASTNode {
     }
 
     toLatex(): string {
-        let innerStatements = "";
-        this.statements.forEach(item => {
-            innerStatements += item.toLatex() + "\n";
-        });
-        
+        let innerStatements = this.statements.map(item => item.toLatex()).join("\n");
         return dedent(
         `\\Function{${this.name}}{${this.arguments}}
         ${innerStatements}
@@ -148,11 +145,7 @@ export class IfStatement extends ASTNode {
     }
 
     toLatex(): string {
-        let innerStatements = "";
-        this.statements.forEach(item => {
-            innerStatements += item.toLatex() + "\n";
-        });
-
+        let innerStatements = this.statements.map(item => item.toLatex()).join('\n');
         const cond = this.condition.toLatex();
 
 
@@ -160,10 +153,7 @@ export class IfStatement extends ASTNode {
 
         this.elif.forEach(item => {
             let cond = item.condition.toLatex(); 
-            let statementLatex = "";
-            item.statements.forEach(statement => {
-                statementLatex += statement.toLatex() + "\n";
-            });
+            let statementLatex = item.statements.map(statement => statement.toLatex()).join("\n");
             elifLatex += dedent(
             `\\ElsIf{$${cond}$}
             ${statementLatex}`) + "\n";
@@ -172,10 +162,9 @@ export class IfStatement extends ASTNode {
         let elseLatex = "";
         
         if (this.elseStatements.length > 0){
-            let elseStatements = "";
-            this.elseStatements.forEach(item => {
-                elseStatements += item.toLatex() + "\n";
-            });
+            
+            let elseStatements = this.elseStatements.map(item => item.toLatex()).join("\n");
+            
             elseLatex = dedent(`\\Else
             ${elseStatements}`);
         }
@@ -200,11 +189,8 @@ export class WhileStatement extends ASTNode {
     }
 
     toLatex(): string {
-        let statements = "";
-        this.statements.forEach(item => {
-            statements += item.toLatex() + "\n";
-        })
-        
+        let statements = this.statements.map(item => item.toLatex()).join("\n");
+       
         const condition = (this.condition as BinOpNode).toLatex();
         return dedent(`
             \\While{$${condition}$}
@@ -227,18 +213,14 @@ export class ForLoop extends ASTNode{
 
 
     toLatex(): string {
-
-        let statements = "";
-        this.statements.forEach(item => {
-            statements += item.toLatex() + "\n";
-        })
+        let statements = this.statements.map(item => item.toLatex()).join("\n");
 
         if (this.rangeExpression instanceof ExternalFunction && this.rangeExpression.functionName == "range"){
             if(this.rangeExpression.args.length == 1){
                 const end = this.rangeExpression.args[0]
                 
                 return dedent(`
-                \\For{$${this.index.toLatex()} = 0, \\dots, ${end}$}
+                \\For{$${this.index.toLatex()} = 0, \\dots, ${end.toLatex()}$}
                 ${statements}
                 \\EndFor`);
 
@@ -247,7 +229,7 @@ export class ForLoop extends ASTNode{
                 const end = this.rangeExpression.args[1]
                 
                 return dedent(`
-                \\For{$${this.index.toLatex()} = ${start}, \\dots, ${end}$}
+                \\For{$${this.index.toLatex()} = ${start.toLatex()}, \\dots, ${end.toLatex()}$}
                 ${statements}
                 \\EndFor`);
             }
