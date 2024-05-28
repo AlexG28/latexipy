@@ -145,6 +145,16 @@ export class Lexer {
                 this.advance();
                 return new Token('COMMA', ',')
             }
+            
+            if (this.currentChar === '[') {
+                this.advance();
+                return new Token('LEFTBRACKET', '[')
+            }
+            
+            if (this.currentChar === ']') {
+                this.advance();
+                return new Token('RIGHTBRACKET', ']')
+            }
 
             throw new Error('Invalid character');
         }

@@ -81,6 +81,19 @@ export class Variable extends ASTNode{
     }
 }
 
+export class List extends ASTNode{
+    elements: ASTNode[];
+    
+    constructor(elements: ASTNode[]){
+        super("List")
+        this.elements = elements
+    }
+
+    toLatex(): string {
+        return "[\"baba\"]"
+    }
+}
+
 export class ExternalFunction extends ASTNode{
     functionName: string; 
     args: ASTNode[];

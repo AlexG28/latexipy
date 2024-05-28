@@ -9,7 +9,8 @@ import {
     IfStatement,
     WhileStatement,
     ExternalFunction,
-    ForLoop
+    ForLoop,
+    List
 } from "$lib/nodes";
 
 import { Parser } from "$lib/parser";
@@ -530,6 +531,30 @@ test('test for loop variable', ()=> {
         new Variable("elem"), 
         new Variable("elements"), 
         []
+    )
+
+    expect(result).toEqual(expected);
+})
+
+
+test('list assignment', ()=> {
+    const inputText = `[1*3,2,3,varone]`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result = parser.processList();
+
+    const expected = new List(
+        [
+            new BinOpNode(
+                new NumNode(1),
+                new Token("MULTIPLY", "*"),
+                new NumNode(3),
+            ),
+            new NumNode(2),
+            new NumNode(3),
+            new Variable("varone")
+        ]        
     )
 
     expect(result).toEqual(expected);
