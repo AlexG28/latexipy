@@ -90,7 +90,9 @@ export class List extends ASTNode{
     }
 
     toLatex(): string {
-        return "[\"baba\"]"
+        const elements = this.elements.map(elem => elem.toLatex()).join(",");
+        
+        return `[${elements}]`
     }
 }
 
