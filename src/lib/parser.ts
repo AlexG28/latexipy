@@ -322,6 +322,8 @@ export class Parser{
             return result;
         } else if (currentToken.type == "ID") {
             return this.variableOrFunction();
+        } else if (currentToken.type == "LEFTBRACKET"){
+            return this.processList();
         } else {
             throw new Error("Invalid syntax")
         }
