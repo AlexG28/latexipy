@@ -538,13 +538,13 @@ test('test for loop variable', ()=> {
 
 
 test('list assignment', ()=> {
-    const inputText = `[1*3,2,3,varone]`;
+    const inputText = `var1 = [1*3,2,3,varone]`;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result = parser.processList();
+    const result = parser.assignment(0);
 
-    const expected = new List(
+    const list = new List(
         [
             new BinOpNode(
                 new NumNode(1),
@@ -555,6 +555,11 @@ test('list assignment', ()=> {
             new NumNode(3),
             new Variable("varone")
         ]        
+    )
+
+    const expected = new Assignment(
+        new Variable("var1"), 
+        list
     )
 
     expect(result).toEqual(expected);
