@@ -9,7 +9,8 @@ import {
     IfStatement,
     WhileStatement,
     ExternalFunction,
-    ForLoop
+    ForLoop,
+    List
 } from "$lib/nodes";
 
 import { expect, test } from 'vitest'
@@ -401,5 +402,26 @@ test('test for loop with object', ()=> {
     \\For{$car$ in $cars$}
 
     \\EndFor`);
+    expect(result).toEqual(expected);
+})
+
+
+test('test list', ()=> {
+    const list = new List(
+        [
+            new BinOpNode(
+                new NumNode(1),
+                new Token("MULTIPLY", "*"),
+                new NumNode(3),
+            ),
+            new NumNode(2),
+            new NumNode(3),
+            new Variable("varone")
+        ]        
+    )
+
+    const result = list.toLatex();
+
+    const expected = `[1 * 3,2,3,varone]`;
     expect(result).toEqual(expected);
 })

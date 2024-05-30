@@ -34,3 +34,36 @@ test('global system test', ()=> {
     expect(result).toEqual(expected);
 })
 
+
+test('system test with lists and for loops', ()=> {
+
+    const input_text = 
+`def listTest(a,b): 
+    a = [1,2,3]
+    for letter in a: 
+        letter = letter + 2`;
+   
+    const lexer = new Lexer(input_text);
+    const parser = new Parser(lexer);
+    const ast = parser.beginFunction(0);
+
+    const converter = new ASTToLatex(ast);
+    const result = converter.convert();
+
+    const expected = dedent(
+        `\\begin{algorithm}
+        \\caption{listTest}
+        \\begin{algorithmic}
+        \\Function{listTest}{a,b}
+        \\State $a \\gets [1,2,3]$
+
+        \\For{$letter$ in $a$}
+        \\State $letter \\gets letter + 2$
+        \\EndFor
+        \\EndFunction
+        \\end{algorithmic}
+        \\end{algorithm}`);
+
+    expect(result).toEqual(expected);
+})
+

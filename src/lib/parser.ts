@@ -10,7 +10,8 @@ import {
     IfStatement,
     WhileStatement, 
     ForLoop,
-    ExternalFunction
+    ExternalFunction,
+    List
 } from "./nodes";
 
 import { Lexer } from "$lib/lexer";
@@ -168,6 +169,28 @@ export class Parser{
         )
     }
 
+    processList(): List {
+        let elements: ASTNode[] = [];
+        
+        this.consumeToken("LEFTBRACKET")
+        if (this.tokenType() != "RIGHTBRACKET"){
+            for (;;) {
+                elements.push(this.expression())
+
+                if (this.tokenType() == "COMMA"){
+                    this.consumeToken("COMMA")
+                } else if (this.tokenType() == "RIGHTBRACKET"){
+                    break;
+                }
+            }
+        }
+
+        this.consumeToken("RIGHTBRACKET")
+        
+        return new List(elements)
+    }
+
+
     collectStatements(indent: number): ASTNode[] {
         let statement: ASTNode[] = [];
         
@@ -299,6 +322,8 @@ export class Parser{
             return result;
         } else if (currentToken.type == "ID") {
             return this.variableOrFunction();
+        } else if (currentToken.type == "LEFTBRACKET"){
+            return this.processList();
         } else {
             throw new Error("Invalid syntax")
         }
