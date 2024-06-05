@@ -8,10 +8,14 @@ export class Lexer {
     currentIndent: number;
 
     constructor(text: string) {
-        this.text = text;
+        this.text = this.removeEmptyLines(text);
         this.pos = 0;
         this.currentChar = this.text[this.pos];
         this.currentIndent = 0;
+    }
+
+    removeEmptyLines(text: string){
+        return text.split('\n').filter(line => line.trim() !== '').join('\n')
     }
 
     advance() {

@@ -217,15 +217,14 @@ export class Parser{
                     statement.push(this.assignment(indent + 1));
                     break; 
                 } 
+                case "NEWLINE": {
+                    this.consumeToken("NEWLINE")
+                    break;
+                }
                 default: { 
                    throw new Error('Somethings wrong');
                 } 
             }
-            
-            if (this.newLine()){
-                this.consumeToken("NEWLINE");
-            }
-            
         }
 
         return statement;
