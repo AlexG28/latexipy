@@ -17,29 +17,64 @@ import { Parser } from "$lib/parser";
 import { Lexer } from "$lib/lexer";
 import { expect, test } from 'vitest'
 
+const genericStatement = new Assignment(
+    new Variable('a'), 
+    new NumNode(4)
+)
+
 test('test function declaration with no arguments', ()=> {
     const inputText = `def functionName():
+        a=4
     `;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
     const result: FunctionCall = parser.beginFunction(0);
 
-    const expected: FunctionCall = new FunctionCall('functionName', [], []);
+    const expected: FunctionCall = new FunctionCall('functionName', [], [genericStatement]);
 
     expect(result).toEqual(expected);
 })
 
 
-test('test function declaration with one argument', ()=> {
-    const inputText = `def functionName(arg1):
+test('test empty lines', ()=> {
+    const inputText = 
+    `def functionName():
+        a=3
+
+        b=3
+
+
+        c=3
     `;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
     const result: FunctionCall = parser.beginFunction(0);
 
-    const expected: FunctionCall = new FunctionCall('functionName', ["arg1"], []);
+    const assignment1 = new Assignment(new Variable('a'), new NumNode(3))
+    const assignment2 = new Assignment(new Variable('b'), new NumNode(3))
+    const assignment3 = new Assignment(new Variable('c'), new NumNode(3))
+
+    const expected = new FunctionCall(
+        'functionName', 
+        [], 
+        [assignment1, assignment2, assignment3]
+    );
+
+    expect(result).toEqual(expected);
+})
+
+test('test function declaration with one argument', ()=> {
+    const inputText = `def functionName(arg1):
+        a=4
+    `;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result: FunctionCall = parser.beginFunction(0);
+
+    const expected: FunctionCall = new FunctionCall('functionName', ["arg1"], [genericStatement]);
 
     expect(result).toEqual(expected);
 })
@@ -47,13 +82,14 @@ test('test function declaration with one argument', ()=> {
 
 test('test function declaration with multiple arguments', ()=> {
     const inputText = `def functionName(arg1, anotherArg, arg3):
+        a=4
     `;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
     const result: FunctionCall = parser.beginFunction(0);
 
-    const expected = new FunctionCall('functionName', ["arg1", "anotherArg", "arg3"], []);
+    const expected = new FunctionCall('functionName', ["arg1", "anotherArg", "arg3"], [genericStatement]);
 
     expect(result).toEqual(expected);
 })
@@ -234,6 +270,7 @@ test('test advanced return statement', ()=> {
 
 test('test if statement', ()=> {
     const inputText = `if 10 > 4:
+        a=4
     `;
 
     const lexer = new Lexer(inputText);
@@ -246,7 +283,7 @@ test('test if statement', ()=> {
             new Token("GREATERTHAN", ">"),
             new NumNode(4)
         ), 
-        [],
+        [genericStatement],
         [],
         []
     )
@@ -418,6 +455,7 @@ else:
 
 test('test while statement', ()=> {
     const inputText = `while test(val) > 4:
+        a=4
     `;
 
     const lexer = new Lexer(inputText);
@@ -433,7 +471,7 @@ test('test while statement', ()=> {
             new Token("GREATERTHAN", ">"),
             new NumNode(4)
         ), 
-        []
+        [genericStatement]
     )
 
     expect(result).toEqual(expected);
@@ -501,6 +539,7 @@ test('test external function call with expression arguments', ()=> {
 
 test('test for loop with range', ()=> {
     const inputText = `for i in range(start, end):
+        a=4
     `;
 
     const lexer = new Lexer(inputText);
@@ -513,7 +552,7 @@ test('test for loop with range', ()=> {
             "range", 
             [new Variable("start"), new Variable("end")]
         ), 
-        []
+        [genericStatement]
     )
 
     expect(result).toEqual(expected);
@@ -521,6 +560,7 @@ test('test for loop with range', ()=> {
 
 test('test for loop variable', ()=> {
     const inputText = `for elem in elements:
+        a=4
     `;
 
     const lexer = new Lexer(inputText);
@@ -530,7 +570,7 @@ test('test for loop variable', ()=> {
     const expected = new ForLoop(
         new Variable("elem"), 
         new Variable("elements"), 
-        []
+        [genericStatement]
     )
 
     expect(result).toEqual(expected);
