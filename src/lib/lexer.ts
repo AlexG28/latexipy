@@ -119,40 +119,48 @@ export class Lexer {
 
             if (operatorChars.includes(this.currentChar)){
                 let operator = '';
-                operator += this.currentChar;
-
+                
+                while(operatorChars.includes(this.currentChar)){
+                    operator += this.currentChar;
+                    this.advance();
+                }
+                
                 switch(operator) {
                     case '+': {
-                        this.advance();
                         return new Token('PLUS', '+');    
                     }
                     case '-': {
-                        this.advance();
                         return new Token('MINUS', '-');    
                     }
                     case '*': {
-                        this.advance();
                         return new Token('MULTIPLY', '*');    
                     }
                     case '/': {
-                        this.advance();
                         return new Token('DIVIDE', '/');    
                     }
                     case '>': {
-                        this.advance();
                         return new Token('GREATERTHAN', '>');    
                     }
                     case '<': {
-                        this.advance();
                         return new Token('LESSTHAN', '<');    
                     }
+                    case '<=': {
+                        return new Token('LESSTHANOREQUAL', '<=');    
+                    }
+                    case '>=': {
+                        return new Token('GREATERTHANOREQUAL', '>=');    
+                    }
                     case '=': {
-                        this.advance();
                         return new Token('ASSIGN', '=');    
+                    }
+                    case '+=': {
+                        return new Token('ASSIGN', '+=');    
+                    }
+                    case '-=': {
+                        return new Token('ASSIGN', '-=');    
                     }
                 }
             } else {
-
                 switch(this.currentChar){
                     case '(': {
                         this.advance();

@@ -31,7 +31,7 @@ test('test function declaration with no arguments', ()=> {
     const parser = new Parser(lexer);
     const result: FunctionCall = parser.beginFunction(0);
 
-    const expected: FunctionCall = new FunctionCall('functionName', [], [genericStatement]);
+    const expected = new FunctionCall('functionName', [], [genericStatement]);
 
     expect(result).toEqual(expected);
 })
@@ -242,6 +242,28 @@ test('test simple return statement', ()=> {
     expect(result).toEqual(expected);
 })
 
+test('test expression with complex operators', ()=> {
+    const inputText = `varThree += (varOne >= varTwo)`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result = parser.assignment(0);
+
+    console.log(result);
+
+    const bracket = new BinOpNode(
+        new Variable("varOne"),
+        new Token("GREATERTHANOREQUAL", ">="),
+        new Variable("varTwo")
+    )
+
+    const expected = new Assignment(
+        new Variable("varThree"),
+        bracket
+    )
+    
+    expect(result).toEqual(expected);
+})
 
 test('test advanced return statement', ()=> {
     const inputText = `return varName + (3/2)`;

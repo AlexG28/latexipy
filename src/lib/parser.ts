@@ -297,7 +297,9 @@ export class Parser{
             'PLUS', 
             'MINUS', 
             'GREATERTHAN', 
-            'LESSTHAN'
+            'LESSTHAN',
+            'GREATERTHANOREQUAL', 
+            'LESSTHANOREQUAL'
         ].includes(this.currentToken.type)) {
             const token = this.currentToken;
             this.consumeToken(this.currentToken.type);
