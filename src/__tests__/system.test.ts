@@ -67,3 +67,59 @@ test('system test with lists and for loops', ()=> {
     expect(result).toEqual(expected);
 })
 
+
+test('test leetcode problem ', ()=> {
+
+    const input_text = 
+`def hello(s): 
+    lettersToRemove = 0
+    output = 14
+
+    for char in s: 
+        if char == 18:
+            lettersToRemove += 1
+        else: 
+            if lettersToRemove > 0: 
+                lettersToRemove -= 1
+            else: 
+                output += char
+
+    return output`;
+   
+    const lexer = new Lexer(input_text);
+    const parser = new Parser(lexer);
+    const ast = parser.beginFunction(0);
+
+    const converter = new ASTToLatex(ast);
+    const result = converter.convert();
+
+    const expected = dedent(
+    `\\begin{algorithm}
+    \\caption{hello}
+    \\begin{algorithmic}
+    \\Function{hello}{s}
+    \\State $lettersToRemove \\gets 0$
+    \\State $output \\gets 14$
+    
+    \\For{$char$ in $s$}
+    
+    \\If{$char == 18$}
+    \\State $lettersToRemove \\gets 1$
+    
+    \\Else
+    
+    \\If{$lettersToRemove > 0$}
+    \\State $lettersToRemove \\gets 1$
+    
+    \\Else
+    \\State $output \\gets char$
+    \\EndIf
+    \\EndIf
+    \\EndFor
+    \\State \\Return output
+    \\EndFunction
+    \\end{algorithmic}
+    \\end{algorithm}`);
+
+    expect(result).toEqual(expected);
+})

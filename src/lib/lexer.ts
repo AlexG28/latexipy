@@ -153,11 +153,14 @@ export class Lexer {
                     case '=': {
                         return new Token('ASSIGN', '=');    
                     }
+                    case '==': {
+                        return new Token('EQUAL', '==');
+                    }
                     case '+=': {
-                        return new Token('ASSIGN', '+=');    
+                        return new Token('ADDASSIGN', '+=');
                     }
                     case '-=': {
-                        return new Token('ASSIGN', '-=');    
+                        return new Token('SUBTRACTASSIGN', '-=');    
                     }
                 }
             } else {

@@ -53,6 +53,14 @@ export class Parser{
         }
     }
 
+    consumeAssign() {
+        const assignmentTokens = ["ASSIGN", "ADDASSIGN", "SUBTRACTASSIGN"]
+
+        if (assignmentTokens.includes(this.currentToken.type)){
+            this.currentToken = this.lexer.getNextToken();
+        }
+    }
+
     beginFunction(indent: number): FunctionCall{
         let args: string[] = [];
         let functionName: string = "";
@@ -245,8 +253,7 @@ export class Parser{
 
         variable = new Variable(String(this.currentToken.value));
         this.consumeToken("ID");
-        
-        this.consumeToken("ASSIGN");
+        this.consumeAssign();
                 
         value = this.expression();
 
@@ -299,7 +306,8 @@ export class Parser{
             'GREATERTHAN', 
             'LESSTHAN',
             'GREATERTHANOREQUAL', 
-            'LESSTHANOREQUAL'
+            'LESSTHANOREQUAL',
+            'EQUAL'
         ].includes(this.currentToken.type)) {
             const token = this.currentToken;
             this.consumeToken(this.currentToken.type);
