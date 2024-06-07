@@ -41,14 +41,15 @@ test('test tab counting', ()=> {
                 [
                     new Assignment(
                         new Variable("b"), 
+                        "ASSIGN", 
                         new NumNode(1)
                     )
                 ], 
                 [],
                 []
             ),
-            new Assignment(new Variable("c"), new NumNode(2)),
-            new Assignment(new Variable("d"), new NumNode(3)),
+            new Assignment(new Variable("c"), "ASSIGN", new NumNode(2)),
+            new Assignment(new Variable("d"), "ASSIGN", new NumNode(3)),
         ]
     );
     expect(result).toEqual(expected);
@@ -77,6 +78,7 @@ test('test nested tab counting', ()=> {
         [
             new Assignment(
                 new Variable("d"), 
+                "ASSIGN", 
                 new NumNode(4)
             )
         ], 
@@ -92,7 +94,7 @@ test('test nested tab counting', ()=> {
         ), 
         [
             innerIfStatement, 
-            new Assignment(new Variable("f"), new NumNode(42)),
+            new Assignment(new Variable("f"), "ASSIGN", new NumNode(42)),
         ],
         [],
         []
@@ -103,7 +105,7 @@ test('test nested tab counting', ()=> {
         [], 
         [
             outerIfStatement,
-            new Assignment(new Variable("c"), new NumNode(2)),
+            new Assignment(new Variable("c"), "ASSIGN", new NumNode(2)),
         ]
     );
     expect(result).toEqual(expected);
@@ -132,6 +134,7 @@ test('end to end test', ()=> {
 
     const firstAssignment = new Assignment(
         var1, 
+        "ASSIGN", 
         new BinOpNode(
             new NumNode(14),
             new Token('PLUS', '+'),
@@ -141,6 +144,7 @@ test('end to end test', ()=> {
 
     const secondAssignment = new Assignment(
         var2, 
+        "ASSIGN", 
         new BinOpNode(
             new NumNode(69),
             new Token('GREATERTHAN', '>'),
@@ -150,6 +154,7 @@ test('end to end test', ()=> {
 
     const thirdAssignment = new Assignment(
         var3,
+        "ASSIGN", 
         new BinOpNode(
             var1,
             new Token('MINUS', '-'),
@@ -159,6 +164,7 @@ test('end to end test', ()=> {
     
     const fourthAssignment = new Assignment(
         var3,
+        "ASSIGN", 
         new NumNode(19)
     );
     

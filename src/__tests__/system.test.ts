@@ -68,7 +68,7 @@ test('system test with lists and for loops', ()=> {
 })
 
 
-test('test leetcode problem ', ()=> {
+test('system test 2', ()=> {
 
     const input_text = 
 `def hello(s): 
@@ -79,7 +79,7 @@ test('test leetcode problem ', ()=> {
         if char == 18:
             lettersToRemove += 1
         else: 
-            if lettersToRemove > 0: 
+            if lettersToRemove > (0+13): 
                 lettersToRemove -= 1
             else: 
                 output += char
@@ -104,15 +104,15 @@ test('test leetcode problem ', ()=> {
     \\For{$char$ in $s$}
     
     \\If{$char == 18$}
-    \\State $lettersToRemove \\gets 1$
+    \\State $lettersToRemove \\gets lettersToRemove + 1$
     
     \\Else
     
-    \\If{$lettersToRemove > 0$}
-    \\State $lettersToRemove \\gets 1$
+    \\If{$lettersToRemove > (0 + 13)$}
+    \\State $lettersToRemove \\gets lettersToRemove - 1$
     
     \\Else
-    \\State $output \\gets char$
+    \\State $output \\gets output + char$
     \\EndIf
     \\EndIf
     \\EndFor

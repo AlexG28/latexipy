@@ -19,6 +19,7 @@ import { expect, test } from 'vitest'
 
 const genericStatement = new Assignment(
     new Variable('a'), 
+    "ASSIGN",
     new NumNode(4)
 )
 
@@ -52,9 +53,9 @@ test('test empty lines', ()=> {
     const parser = new Parser(lexer);
     const result: FunctionCall = parser.beginFunction(0);
 
-    const assignment1 = new Assignment(new Variable('a'), new NumNode(3))
-    const assignment2 = new Assignment(new Variable('b'), new NumNode(3))
-    const assignment3 = new Assignment(new Variable('c'), new NumNode(3))
+    const assignment1 = new Assignment(new Variable('a'),"ASSIGN", new NumNode(3))
+    const assignment2 = new Assignment(new Variable('b'),"ASSIGN", new NumNode(3))
+    const assignment3 = new Assignment(new Variable('c'),"ASSIGN", new NumNode(3))
 
     const expected = new FunctionCall(
         'functionName', 
@@ -102,7 +103,7 @@ test('test integer variable assignment', ()=> {
     const parser = new Parser(lexer);
     const result: Assignment = parser.assignment(0);
 
-    const expected = new Assignment(new Variable("varName"), new NumNode(14));
+    const expected = new Assignment(new Variable("varName"),"ASSIGN", new NumNode(14));
 
     expect(result).toEqual(expected);
 })
@@ -117,7 +118,7 @@ test('test function with an integer assignment', ()=> {
     const parser = new Parser(lexer);
     const result: FunctionCall = parser.beginFunction(0);
 
-    const expected = new FunctionCall('functionName', [], [new Assignment(new Variable("varName"), new NumNode(14))]);
+    const expected = new FunctionCall('functionName', [], [new Assignment(new Variable("varName"),"ASSIGN", new NumNode(14))]);
 
     expect(result).toEqual(expected);
 })
@@ -140,8 +141,8 @@ test('test function with multiple integer assignments', ()=> {
         'functionName', 
         [], 
         [
-            new Assignment(var1, new NumNode(14)), 
-            new Assignment(var2, new NumNode(6969))
+            new Assignment(var1, "ASSIGN", new NumNode(14)), 
+            new Assignment(var2, "ASSIGN", new NumNode(6969))
         ]
     );
 
@@ -161,6 +162,7 @@ test('test expressions 1', ()=> {
 
     const expected = new Assignment(
         anotherVar,
+        "ASSIGN", 
         new BinOpNode(
             new BinOpNode(
                 new NumNode(19),
@@ -189,6 +191,7 @@ test('test expressions 2', ()=> {
 
     const expected = new Assignment(
         anotherVar,
+        "ASSIGN", 
         new BinOpNode(
             new BinOpNode(
                 anotherVar,
@@ -219,6 +222,7 @@ test('test boolean expression', ()=> {
 
     const expected = new Assignment(
         anotherVar,
+        "ASSIGN", 
         new BinOpNode(
             new NumNode(19),
             new Token('GREATERTHAN', '>'),
@@ -249,8 +253,6 @@ test('test expression with complex operators', ()=> {
     const parser = new Parser(lexer);
     const result = parser.assignment(0);
 
-    console.log(result);
-
     const bracket = new BinOpNode(
         new Variable("varOne"),
         new Token("GREATERTHANOREQUAL", ">="),
@@ -259,6 +261,7 @@ test('test expression with complex operators', ()=> {
 
     const expected = new Assignment(
         new Variable("varThree"),
+        "ADDASSIGN", 
         bracket
     )
     
@@ -335,6 +338,7 @@ else:
         [
             new Assignment(
                 new Variable("a"),
+                "ASSIGN", 
                 new NumNode(1)
             )
         ],
@@ -342,6 +346,7 @@ else:
         [
             new Assignment(
                 new Variable("a"),
+                "ASSIGN", 
                 new NumNode(2)
             )
         ]
@@ -373,6 +378,7 @@ elif 3>2:
         [
             new Assignment(
                 new Variable("a"),
+                "ASSIGN", 
                 new NumNode(1)
             )
         ],
@@ -386,10 +392,12 @@ elif 3>2:
                 statements: [
                     new Assignment(
                         new Variable("b"),
+                        "ASSIGN", 
                         new NumNode(2)
                     ),
                     new Assignment(
                         new Variable("c"),
+                        "ASSIGN", 
                         new NumNode(3)
                     )
                 ]
@@ -428,6 +436,7 @@ else:
         [
             new Assignment(
                 new Variable("a"),
+                "ASSIGN", 
                 new NumNode(1)
             )
         ],
@@ -441,10 +450,12 @@ else:
                 statements: [
                     new Assignment(
                         new Variable("b"),
+                        "ASSIGN", 
                         new NumNode(2)
                     ),
                     new Assignment(
                         new Variable("c"),
+                        "ASSIGN", 
                         new NumNode(3)
                     )
                 ]
@@ -458,6 +469,7 @@ else:
                 statements: [
                     new Assignment(
                         new Variable("g"),
+                        "ASSIGN", 
                         new NumNode(19)
                     ),
                 ]
@@ -466,6 +478,7 @@ else:
         [
             new Assignment(
                 new Variable("d"),
+                "ASSIGN", 
                 new NumNode(4)
             )
         ]
@@ -509,6 +522,7 @@ test('test external function call', ()=> {
 
     const expected = new Assignment(
         new Variable("a"), 
+        "ASSIGN", 
         new ExternalFunction("perform", [])
     )
 
@@ -525,6 +539,7 @@ test('test external function call with arguments', ()=> {
 
     const expected = new Assignment(
         new Variable("delta"), 
+        "ASSIGN", 
         new ExternalFunction("hyperLuminar", [new Variable("time"), new Variable("distance")])
     )
 
@@ -549,6 +564,7 @@ test('test external function call with expression arguments', ()=> {
     )
     const expected = new Assignment(
         new Variable("delta"),
+        "ASSIGN", 
         new ExternalFunction(
             "hyperLuminar", 
             [arg1, arg2]
@@ -621,6 +637,7 @@ test('list assignment', ()=> {
 
     const expected = new Assignment(
         new Variable("var1"), 
+        "ASSIGN", 
         list
     )
 

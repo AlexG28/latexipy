@@ -29,6 +29,7 @@ test('General test', ()=> {
         [
             new Assignment(
                 new Variable("dividend"),
+                "ASSIGN", 
                 new NumNode(0)
             )
         ], 
@@ -67,6 +68,7 @@ test('General test', ()=> {
     
     const assignemnt = new Assignment(
         new Variable("dividend"),
+        "ASSIGN", 
         binop
     )
 

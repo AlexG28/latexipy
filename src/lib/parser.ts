@@ -250,14 +250,17 @@ export class Parser{
     assignment(indent: number): Assignment{
         let variable: Variable;
         let value: ASTNode;
+        let operatorType: string;
 
         variable = new Variable(String(this.currentToken.value));
         this.consumeToken("ID");
+        operatorType = this.tokenType();
+        
         this.consumeAssign();
                 
         value = this.expression();
 
-        return new Assignment(variable, value);
+        return new Assignment(variable, operatorType, value);
     }
 
     functionArguments(name: string): ExternalFunction{

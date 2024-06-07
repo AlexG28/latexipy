@@ -96,6 +96,7 @@ test('nested binary op', ()=> {
 test('simple integer assignment', ()=> {
     const assignemnt = new Assignment(
         new Variable("a"),
+        "ASSIGN", 
         new NumNode(19)
     )
     const result = assignemnt.toLatex();
@@ -122,6 +123,7 @@ test('variable assignment with an expression', ()=> {
     
     const assignemnt = new Assignment(
         new Variable("dividend"),
+        "ASSIGN", 
         binop
     )
     
@@ -212,10 +214,12 @@ test('if elif else statements', ()=> {
     
     const statement1 = new Assignment(
         new Variable("num"),
+        "ASSIGN", 
         new NumNode(19)
     )
     const statement2 = new Assignment(
         new Variable("sum"),
+        "ASSIGN", 
         new NumNode(16)
     )
 
@@ -262,6 +266,7 @@ test('nested if else statements', ()=> {
     )
     const statement = new Assignment(
         new Variable("num"),
+        "ASSIGN", 
         new NumNode(19)
     )
 
@@ -423,5 +428,18 @@ test('test list', ()=> {
     const result = list.toLatex();
 
     const expected = `[1 * 3,2,3,varone]`;
+    expect(result).toEqual(expected);
+})
+
+
+test('test assignment equals operator', ()=> {
+    const assignemnt = new Assignment(
+        new Variable("a"),
+        "ADDASSIGN", 
+        new NumNode(19)
+    )
+    const result = assignemnt.toLatex();
+
+    const expected = `\\State $a \\gets a + 19$`;
     expect(result).toEqual(expected);
 })
