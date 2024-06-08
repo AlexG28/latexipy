@@ -2,6 +2,10 @@ const dedent = (str: string): string => {
     return str.split('\n').map(line => line.trimStart()).join('\n');
 }
 
+interface OperationMap {
+    [key: string]: string;
+}
+
 
 export class Token {
     type: string;
@@ -259,18 +263,36 @@ export class ForLoop extends ASTNode{
 
 export class Assignment extends ASTNode {
     variable: Variable; 
+    operator: string;
     value: ASTNode;
-
-    constructor(name: Variable, value: ASTNode) {
+    
+    operationMap: OperationMap = {
+        'ADDASSIGN': '+',
+        'SUBTRACTASSIGN': '-'
+    };
+    
+    constructor(name: Variable, operator: string, value: ASTNode) {
         super('Assignment');
         this.variable = name;
+        this.operator = operator;
         this.value = value;
     }
-
+        
     toLatex(): string{
-        const varName = this.variable.name;
-        const varVal = this.value.toLatex();
-        return `\\State $${varName} \\gets ${varVal}$`
+        let output = "";
+
+        if(["ADDASSIGN", "SUBTRACTASSIGN"].includes(this.operator)){
+            const varName = this.variable.name;
+            const varVal = this.value.toLatex();
+            const operatorChar = this.operationMap[this.operator];
+            output = `\\State $${varName} \\gets ${varName} ${operatorChar} ${varVal}$`
+        } else {
+            const varName = this.variable.name;
+            const varVal = this.value.toLatex();
+            output =  `\\State $${varName} \\gets ${varVal}$`
+        }
+
+        return output
     }
 }
 

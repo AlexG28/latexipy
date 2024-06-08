@@ -42,6 +42,8 @@ export class Lexer {
     }
 
     getNextToken(): Token {
+        const operatorChars = "+-*/%<>=";
+
         while (this.currentChar !== null) {
             if (this.currentChar === ' ') {
                 this.skipWhitespace();
@@ -74,93 +76,116 @@ export class Lexer {
                     id += this.currentChar;
                     this.advance();
                 }
-                if (id === 'if') {
-                    return new Token('IF', id);
-                } else if (id === 'elif') {
-                    return new Token('ELIF', id);
-                } else if (id === 'else') {
-                    return new Token('ELSE', id);
-                } else if (id === 'while'){
-                    return new Token('WHILE', id);
-                } else if (id === 'def') {
-                    return new Token('DEF', id);
-                } else if (id === 'return') {
-                    return new Token('RETURN', id);
-                } else if (id === 'for') {
-                    return new Token('FOR', id);
-                } else if (id === 'in') {
-                    return new Token('IN', id);
-                } else {
-                    return new Token('ID', id);
+
+                switch(id){
+                    case 'if':{
+                        return new Token('IF', id);
+                    }
+                    case 'elif':{
+                        return new Token('ELIF', id);
+                    }
+                    case 'else':{
+                        return new Token('ELSE', id);
+                    }
+                    case 'while':{
+                        return new Token('WHILE', id);
+                    }
+                    case 'def':{
+                        return new Token('DEF', id);
+                    }
+                    case 'return':{
+                        return new Token('RETURN', id);
+                    }
+                    case 'for':{
+                        return new Token('FOR', id);
+                    }
+                    case 'in':{
+                        return new Token('IN', id);
+                    }
+                    default:{
+                        return new Token('ID', id);
+                    }
                 }
             }
 
-            if (this.currentChar === '+') {
-                this.advance();
-                return new Token('PLUS', '+');
+            if (operatorChars.includes(this.currentChar)){
+                let operator = '';
+                
+                while(operatorChars.includes(this.currentChar)){
+                    operator += this.currentChar;
+                    this.advance();
+                }
+                
+                switch(operator) {
+                    case '+': {
+                        return new Token('PLUS', '+');    
+                    }
+                    case '-': {
+                        return new Token('MINUS', '-');    
+                    }
+                    case '*': {
+                        return new Token('MULTIPLY', '*');    
+                    }
+                    case '/': {
+                        return new Token('DIVIDE', '/');    
+                    }
+                    case '>': {
+                        return new Token('GREATERTHAN', '>');    
+                    }
+                    case '<': {
+                        return new Token('LESSTHAN', '<');    
+                    }
+                    case '<=': {
+                        return new Token('LESSTHANOREQUAL', '<=');    
+                    }
+                    case '>=': {
+                        return new Token('GREATERTHANOREQUAL', '>=');    
+                    }
+                    case '=': {
+                        return new Token('ASSIGN', '=');    
+                    }
+                    case '==': {
+                        return new Token('EQUAL', '==');
+                    }
+                    case '+=': {
+                        return new Token('ADDASSIGN', '+=');
+                    }
+                    case '-=': {
+                        return new Token('SUBTRACTASSIGN', '-=');    
+                    }
+                }
+            } else {
+                switch(this.currentChar){
+                    case '(': {
+                        this.advance();
+                        return new Token('LPAREN', '(');    
+                    }
+                    case ')': {
+                        this.advance();
+                        return new Token('RPAREN', ')');    
+                    }
+                    case ']': {
+                        this.advance();
+                        return new Token('RIGHTBRACKET', ']');    
+                    }
+                    case '[': {
+                        this.advance();
+                        return new Token('LEFTBRACKET', '[');    
+                    }
+                    case ':': {
+                        this.advance();
+                        return new Token('COLON', ':');    
+                    }
+                    case ',': {
+                        this.advance();
+                        return new Token('COMMA', ',');    
+                    }
+                    default:{
+                        throw new Error('Invalid character');
+                    }
+                }
             }
 
-            if (this.currentChar === '-') {
-                this.advance();
-                return new Token('MINUS', '-');
-            }
-
-            if (this.currentChar === '*') {
-                this.advance();
-                return new Token('MULTIPLY', '*');
-            }
-
-            if (this.currentChar === '/') {
-                this.advance();
-                return new Token('DIVIDE', '/');
-            }
-
-            if (this.currentChar === '(') {
-                this.advance();
-                return new Token('LPAREN', '(');
-            }
-
-            if (this.currentChar === ')') {
-                this.advance();
-                return new Token('RPAREN', ')');
-            }
-
-            if (this.currentChar === '=') {
-                this.advance();
-                return new Token('ASSIGN', '=');
-            }
-
-            if (this.currentChar === '>') {
-                this.advance();
-                return new Token('GREATERTHAN', '>');
-            }
-
-            if (this.currentChar === '<') {
-                this.advance();
-                return new Token('LESSTHAN', '<');
-            }
-
-            if (this.currentChar === ':') {
-                this.advance();
-                return new Token('COLON', ':')
-            }
-            
-            if (this.currentChar === ',') {
-                this.advance();
-                return new Token('COMMA', ',')
-            }
-            
-            if (this.currentChar === '[') {
-                this.advance();
-                return new Token('LEFTBRACKET', '[')
-            }
-            
-            if (this.currentChar === ']') {
-                this.advance();
-                return new Token('RIGHTBRACKET', ']')
-            }
-
-            throw new Error('Invalid character');
         }
 
         return new Token('EOF', '');

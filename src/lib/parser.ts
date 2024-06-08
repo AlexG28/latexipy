@@ -53,6 +53,14 @@ export class Parser{
         }
     }
 
+    consumeAssign() {
+        const assignmentTokens = ["ASSIGN", "ADDASSIGN", "SUBTRACTASSIGN"]
+
+        if (assignmentTokens.includes(this.currentToken.type)){
+            this.currentToken = this.lexer.getNextToken();
+        }
+    }
+
     beginFunction(indent: number): FunctionCall{
         let args: string[] = [];
         let functionName: string = "";
@@ -242,15 +250,17 @@ export class Parser{
     assignment(indent: number): Assignment{
         let variable: Variable;
         let value: ASTNode;
+        let operatorType: string;
 
         variable = new Variable(String(this.currentToken.value));
         this.consumeToken("ID");
+        operatorType = this.tokenType();
         
-        this.consumeToken("ASSIGN");
+        this.consumeAssign();
                 
         value = this.expression();
 
-        return new Assignment(variable, value);
+        return new Assignment(variable, operatorType, value);
     }
 
     functionArguments(name: string): ExternalFunction{
@@ -297,7 +307,10 @@ export class Parser{
             'PLUS', 
             'MINUS', 
             'GREATERTHAN', 
-            'LESSTHAN'
+            'LESSTHAN',
+            'GREATERTHANOREQUAL', 
+            'LESSTHANOREQUAL',
+            'EQUAL'
         ].includes(this.currentToken.type)) {
             const token = this.currentToken;
             this.consumeToken(this.currentToken.type);
