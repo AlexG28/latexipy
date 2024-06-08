@@ -10,7 +10,8 @@ import {
     WhileStatement,
     ExternalFunction,
     ForLoop,
-    List
+    List,
+    StringNode
 } from "$lib/nodes";
 
 import { expect, test } from 'vitest'
@@ -63,11 +64,11 @@ test('simple binary op with numbers and variables', ()=> {
     const binop = new BinOpNode(
         new Variable("accumulator"),
         new Token("MULTIPLY", "*"),
-        new NumNode(2)
+        new NumNode(2.3)
     )
     const result = binop.toLatex();
 
-    const expected = `accumulator * 2`;
+    const expected = `accumulator * 2.3`;
     expect(result).toEqual(expected);
 })
 
@@ -102,6 +103,19 @@ test('simple integer assignment', ()=> {
     const result = assignemnt.toLatex();
 
     const expected = `\\State $a \\gets 19$`;
+    expect(result).toEqual(expected);
+})
+
+
+test('simple string assignment assignment', ()=> {
+    const assignemnt = new Assignment(
+        new Variable("a"),
+        "ASSIGN", 
+        new StringNode("Ive got a bad feeling about this!")
+    )
+    const result = assignemnt.toLatex();
+
+    const expected = `\\State $a \\gets \\texttt{"Ive got a bad feeling about this!"}$`;
     expect(result).toEqual(expected);
 })
 
@@ -172,7 +186,7 @@ test('if statement with complex condition', ()=> {
         new BinOpNode(
             new Variable("sum"),
             new Token("DIVIDE", "/"),
-            new NumNode(4)
+            new NumNode(4.25)
         ),
         new Token("MULTIPLY", "*"),
         new BinOpNode(
@@ -191,7 +205,7 @@ test('if statement with complex condition', ()=> {
     const result = ifStatement.toLatex();
 
     const expected = dedent(`
-        \\If{$(sum / 4) * (2 + 3)$}
+        \\If{$(sum / 4.25) * (2 + 3)$}
 
 
 
@@ -436,10 +450,10 @@ test('test assignment equals operator', ()=> {
     const assignemnt = new Assignment(
         new Variable("a"),
         "ADDASSIGN", 
-        new NumNode(19)
+        new NumNode(19.6942)
     )
     const result = assignemnt.toLatex();
 
-    const expected = `\\State $a \\gets a + 19$`;
+    const expected = `\\State $a \\gets a + 19.6942$`;
     expect(result).toEqual(expected);
 })

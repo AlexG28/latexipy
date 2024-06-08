@@ -72,6 +72,19 @@ export class NumNode extends ASTNode {
     }
 }
 
+export class StringNode extends ASTNode {
+    value: string;
+
+    constructor(value: string) {
+        super('String');
+        this.value = value;
+    }
+
+    toLatex(): string {
+        return `\\texttt{\"${this.value}\"}`
+    }
+}
+
 export class Variable extends ASTNode{
     name: string; 
     

@@ -43,7 +43,6 @@ export class Lexer {
 
     getNextToken(): Token {
         const operatorChars = "+-*/%<>=";
-
         while (this.currentChar !== null) {
             if (this.currentChar === ' ') {
                 this.skipWhitespace();
@@ -61,13 +60,38 @@ export class Lexer {
                 return new Token("TAB", "");
             }
 
-            if (/\d/.test(this.currentChar)) {
-                let num = '';
-                while (this.currentChar !== null && /\d/.test(this.currentChar)) {
-                    num += this.currentChar;
+            if (/\d/.test(this.currentChar) || this.currentChar === '.') {
+                let accum = '';
+                let float = false;
+                
+                while (this.currentChar !== null && (/\d/.test(this.currentChar) || this.currentChar === '.')) {
+                    if (/\d/.test(this.currentChar)){
+                        accum += this.currentChar;
+                        this.advance();
+                    } else if (this.currentChar == '.') {
+                        accum += '.'
+                        this.advance();
+                        float = true;
+                    }
+                }
+
+                if (float) {
+                    return new Token('FLOAT', parseFloat(accum))
+                } 
+                return new Token('INTEGER', parseInt(accum)); 
+            }
+
+            if (this.currentChar === '\"') {
+                let accum = '';
+                
+                this.advance();
+                while (this.currentChar !== null && this.currentChar !== '\"') {
+                    accum += this.currentChar;
                     this.advance();
                 }
-                return new Token('INTEGER', parseInt(num));
+                this.advance();
+
+                return new Token('STRING', accum);
             }
 
             if (/[a-zA-Z]/.test(this.currentChar)) {

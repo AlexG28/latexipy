@@ -188,3 +188,55 @@ test('system test 3', ()=> {
 
     expect(result).toEqual(expected);
 })
+
+
+
+test('system test 4', ()=> {
+
+    const input_text = 
+`def calculateAverage(numbers):
+    total = 0
+    count = 0
+    for number in numbers:
+        total = total + number
+        count = count + 1.07
+    
+    if count == 0:
+        return "The list is empty, cannot calculate average."
+    
+    average = total / count
+    return "The average is " + str(average)`;
+   
+    const lexer = new Lexer(input_text);
+    const parser = new Parser(lexer);
+    const ast = parser.beginFunction(0);
+
+    const converter = new ASTToLatex(ast);
+    const result = converter.convert();
+
+    const expected = dedent(
+    `\\begin{algorithm}
+    \\caption{calculateAverage}
+    \\begin{algorithmic}
+    \\Function{calculateAverage}{numbers}
+    \\State $total \\gets 0$
+    \\State $count \\gets 0$
+
+    \\For{$number$ in $numbers$}
+    \\State $total \\gets total + number$
+    \\State $count \\gets count + 1.07$
+    \\EndFor
+
+    \\If{$count == 0$}
+    \\State \\Return \\texttt{"The list is empty, cannot calculate average."}
+
+
+    \\EndIf
+    \\State $average \\gets total / count$
+    \\State \\Return \\texttt{"The average is "} + \\Call{str}{average}
+    \\EndFunction
+    \\end{algorithmic}
+    \\end{algorithm}`);
+
+    expect(result).toEqual(expected);
+})

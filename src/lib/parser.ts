@@ -11,7 +11,8 @@ import {
     WhileStatement, 
     ForLoop,
     ExternalFunction,
-    List
+    List,
+    StringNode
 } from "./nodes";
 
 import { Lexer } from "$lib/lexer";
@@ -321,23 +322,37 @@ export class Parser{
     }
 
     factor() {
-        const currentToken = this.currentToken;
-
-        if (currentToken.type == "INTEGER"){
-            const returnVal = new NumNode(Number(currentToken.value))
-            this.consumeToken("INTEGER");
-            return returnVal;
-        } else if (currentToken.type == "LPAREN") {
-            this.consumeToken("LPAREN");
-            const result = this.expression();
-            this.consumeToken("RPAREN");
-            return result;
-        } else if (currentToken.type == "ID") {
-            return this.variableOrFunction();
-        } else if (currentToken.type == "LEFTBRACKET"){
-            return this.processList();
-        } else {
-            throw new Error("Invalid syntax")
+        switch(this.currentToken.type) {
+            case "INTEGER": {
+                const returnVal = new NumNode(Number(this.currentToken.value))
+                this.consumeToken("INTEGER");
+                return returnVal;
+            }
+            case "STRING": {
+                const returnVal = new StringNode(String(this.currentToken.value));
+                this.consumeToken("STRING");
+                return returnVal;
+            }
+            case "FLOAT": {
+                const returnVal = new NumNode(Number(this.currentToken.value))
+                this.consumeToken("FLOAT");
+                return returnVal;
+            }
+            case "LPAREN": {
+                this.consumeToken("LPAREN");
+                const result = this.expression();
+                this.consumeToken("RPAREN");
+                return result;
+            }
+            case "ID": {
+                return this.variableOrFunction();
+            }
+            case "LEFTBRACKET": {
+                return this.processList();
+            }
+            default: {
+                throw new Error("Invalid expression");
+            }
         }
     }
 }
