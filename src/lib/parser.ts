@@ -17,7 +17,6 @@ import {
 
 import { Lexer } from "$lib/lexer";
 import { type elifCondStatement } from "./nodes"
-import { error } from "@sveltejs/kit";
 
 export class Parser{
     lexer: Lexer;
