@@ -81,6 +81,19 @@ export class Lexer {
                 return new Token('INTEGER', parseInt(accum)); 
             }
 
+            if (this.currentChar === '\"') {
+                let accum = '';
+                
+                this.advance();
+                while (this.currentChar !== null && this.currentChar !== '\"') {
+                    accum += this.currentChar;
+                    this.advance();
+                }
+                this.advance();
+
+                return new Token('STRING', accum);
+            }
+
             if (/[a-zA-Z]/.test(this.currentChar)) {
                 let id = '';
                 while (this.currentChar !== null && /[a-zA-Z0-9]/.test(this.currentChar)) {

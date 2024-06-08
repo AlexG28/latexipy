@@ -11,7 +11,8 @@ import {
     WhileStatement, 
     ForLoop,
     ExternalFunction,
-    List
+    List,
+    StringNode
 } from "./nodes";
 
 import { Lexer } from "$lib/lexer";
@@ -326,6 +327,11 @@ export class Parser{
             case "INTEGER": {
                 const returnVal = new NumNode(Number(this.currentToken.value))
                 this.consumeToken("INTEGER");
+                return returnVal;
+            }
+            case "STRING": {
+                const returnVal = new StringNode(String(this.currentToken.value));
+                this.consumeToken("STRING");
                 return returnVal;
             }
             case "FLOAT": {

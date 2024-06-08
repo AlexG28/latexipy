@@ -10,7 +10,8 @@ import {
     WhileStatement,
     ExternalFunction,
     ForLoop,
-    List
+    List,
+    StringNode
 } from "$lib/nodes";
 
 import { Parser } from "$lib/parser";
@@ -104,6 +105,22 @@ test('test integer variable assignment', ()=> {
     const result: Assignment = parser.assignment(0);
 
     const expected = new Assignment(new Variable("varName"),"ASSIGN", new NumNode(14.9));
+
+    expect(result).toEqual(expected);
+})
+
+
+test('test string variable assignment', ()=> {
+    const inputText = `varName = \"The deathstar weighted about 8.38 x 10e18 kg\"`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result = parser.assignment(0);
+
+    const expected = new Assignment(
+        new Variable("varName"),
+        "ASSIGN", 
+        new StringNode("The deathstar weighted about 8.38 x 10e18 kg"));
 
     expect(result).toEqual(expected);
 })
@@ -320,7 +337,7 @@ test('test if statement', ()=> {
 test('test if else condition', ()=> {
     const inputText = 
 `if 10 > 4:
-    a=1
+    a=\"Its a trap\"
 else:
     a=2
 `;
@@ -339,7 +356,7 @@ else:
             new Assignment(
                 new Variable("a"),
                 "ASSIGN", 
-                new NumNode(1)
+                new StringNode("Its a trap")
             )
         ],
         [],
@@ -616,7 +633,7 @@ test('test for loop variable', ()=> {
 
 
 test('list assignment', ()=> {
-    const inputText = `var1 = [1.28*3,2,3.01,varone]`;
+    const inputText = `var1 = [1.28*3,2,3.01,"this is the way"]`;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
@@ -631,7 +648,7 @@ test('list assignment', ()=> {
             ),
             new NumNode(2),
             new NumNode(3.01),
-            new Variable("varone")
+            new StringNode("this is the way")
         ]        
     )
 
