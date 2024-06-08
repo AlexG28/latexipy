@@ -123,3 +123,68 @@ test('system test 2', ()=> {
 
     expect(result).toEqual(expected);
 })
+
+
+test('system test 3', ()=> {
+
+    const input_text = 
+`def generateFibonacci(n): 
+    fibnumbers = []
+    a = 0
+    b = 1
+    if n > 0:
+        fibnumbers = fibnumbers + [a]
+    if n > 1:
+        fibnumbers = fibnumbers + [b]
+    count = 2
+    while count < n:
+        nextnum = a + b
+        fibnumbers = fibnumbers + [nextnum]
+        a = b
+        b = nextnum
+        count += 1
+    return fibnumbers`;
+   
+    const lexer = new Lexer(input_text);
+    const parser = new Parser(lexer);
+    const ast = parser.beginFunction(0);
+
+    const converter = new ASTToLatex(ast);
+    const result = converter.convert();
+
+    const expected = dedent(
+    `\\begin{algorithm}
+    \\caption{generateFibonacci}
+    \\begin{algorithmic}
+    \\Function{generateFibonacci}{n}
+    \\State $fibnumbers \\gets []$
+    \\State $a \\gets 0$
+    \\State $b \\gets 1$
+    
+    \\If{$n > 0$}
+    \\State $fibnumbers \\gets fibnumbers + [a]$
+    
+    
+    \\EndIf
+    
+    \\If{$n > 1$}
+    \\State $fibnumbers \\gets fibnumbers + [b]$
+    
+    
+    \\EndIf
+    \\State $count \\gets 2$
+    
+    \\While{$count < n$}
+    \\State $nextnum \\gets a + b$
+    \\State $fibnumbers \\gets fibnumbers + [nextnum]$
+    \\State $a \\gets b$
+    \\State $b \\gets nextnum$
+    \\State $count \\gets count + 1$
+    \\EndWhile
+    \\State \\Return fibnumbers
+    \\EndFunction
+    \\end{algorithmic}
+    \\end{algorithm}`);
+
+    expect(result).toEqual(expected);
+})
