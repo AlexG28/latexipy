@@ -80,39 +80,30 @@ export class Lexer {
                 switch(id){
                     case 'if':{
                         return new Token('IF', id);
-                        break;
                     }
                     case 'elif':{
                         return new Token('ELIF', id);
-                        break;
                     }
                     case 'else':{
                         return new Token('ELSE', id);
-                        break;
                     }
                     case 'while':{
                         return new Token('WHILE', id);
-                        break;
                     }
                     case 'def':{
                         return new Token('DEF', id);
-                        break;
                     }
                     case 'return':{
                         return new Token('RETURN', id);
-                        break;
                     }
                     case 'for':{
                         return new Token('FOR', id);
-                        break;
                     }
                     case 'in':{
                         return new Token('IN', id);
-                        break;
                     }
                     default:{
                         return new Token('ID', id);
-                        break;
                     }
                 }
             }
