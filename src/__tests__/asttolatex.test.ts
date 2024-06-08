@@ -10,7 +10,8 @@ import {
     WhileStatement,
     ExternalFunction,
     ForLoop,
-    List
+    List,
+    StringNode
 } from "$lib/nodes";
 
 import { expect, test } from 'vitest'
@@ -102,6 +103,19 @@ test('simple integer assignment', ()=> {
     const result = assignemnt.toLatex();
 
     const expected = `\\State $a \\gets 19$`;
+    expect(result).toEqual(expected);
+})
+
+
+test('simple string assignment assignment', ()=> {
+    const assignemnt = new Assignment(
+        new Variable("a"),
+        "ASSIGN", 
+        new StringNode("Ive got a bad feeling about this!")
+    )
+    const result = assignemnt.toLatex();
+
+    const expected = `\\State $a \\gets \\texttt{"Ive got a bad feeling about this!"}$`;
     expect(result).toEqual(expected);
 })
 

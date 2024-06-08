@@ -81,7 +81,7 @@ export class StringNode extends ASTNode {
     }
 
     toLatex(): string {
-        return `${this.value}`;
+        return `\\texttt{\"${this.value}\"}`
     }
 }
 
