@@ -327,6 +327,10 @@ export class Parser{
             const returnVal = new NumNode(Number(currentToken.value))
             this.consumeToken("INTEGER");
             return returnVal;
+        } else if (currentToken.type == "FLOAT") {
+            const returnVal = new NumNode(Number(currentToken.value))
+            this.consumeToken("FLOAT");
+            return returnVal;
         } else if (currentToken.type == "LPAREN") {
             this.consumeToken("LPAREN");
             const result = this.expression();

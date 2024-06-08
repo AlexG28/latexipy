@@ -97,13 +97,13 @@ test('test function declaration with multiple arguments', ()=> {
 
 
 test('test integer variable assignment', ()=> {
-    const inputText = `varName = 14`;
+    const inputText = `varName = 14.9`;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
     const result: Assignment = parser.assignment(0);
 
-    const expected = new Assignment(new Variable("varName"),"ASSIGN", new NumNode(14));
+    const expected = new Assignment(new Variable("varName"),"ASSIGN", new NumNode(14.9));
 
     expect(result).toEqual(expected);
 })
@@ -212,7 +212,7 @@ test('test expressions 2', ()=> {
 
 
 test('test boolean expression', ()=> {
-    const inputText = `anotherVar = 19 > 4`;
+    const inputText = `anotherVar = 19 > 4.82`;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
@@ -226,7 +226,7 @@ test('test boolean expression', ()=> {
         new BinOpNode(
             new NumNode(19),
             new Token('GREATERTHAN', '>'),
-            new NumNode(4),
+            new NumNode(4.82),
         )
     )
 
@@ -358,9 +358,9 @@ else:
 
 test('test if elif condition', ()=> {
     const inputText = 
-`if 10 > 4:
+`if 10.449 > 4:
     a=1
-elif 3>2:
+elif 3.2>2:
     b=2
     c=3
 `;
@@ -371,7 +371,7 @@ elif 3>2:
 
     const expected = new IfStatement(
         new BinOpNode(
-            new NumNode(10),
+            new NumNode(10.449),
             new Token("GREATERTHAN", ">"),
             new NumNode(4)
         ), 
@@ -385,7 +385,7 @@ elif 3>2:
         [
             {
                 condition: new BinOpNode(
-                    new NumNode(3),
+                    new NumNode(3.2),
                     new Token("GREATERTHAN", ">"),
                     new NumNode(2)
                 ),
@@ -616,7 +616,7 @@ test('test for loop variable', ()=> {
 
 
 test('list assignment', ()=> {
-    const inputText = `var1 = [1*3,2,3,varone]`;
+    const inputText = `var1 = [1.28*3,2,3.01,varone]`;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
@@ -625,12 +625,12 @@ test('list assignment', ()=> {
     const list = new List(
         [
             new BinOpNode(
-                new NumNode(1),
+                new NumNode(1.28),
                 new Token("MULTIPLY", "*"),
                 new NumNode(3),
             ),
             new NumNode(2),
-            new NumNode(3),
+            new NumNode(3.01),
             new Variable("varone")
         ]        
     )
