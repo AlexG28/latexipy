@@ -1,7 +1,7 @@
 # LatexiPy - Pseudocode made easy
 
 ## What is LatexiPy?
-LatexiPy is is a python code to latex pseudocode converter. Paste in a valid python function code in the left textbox, click convert, and receive a LaTex pseudo-code equivalent in the right textbox. 
+LatexiPy is a python code to latex pseudocode converter. Paste in a valid python function code in the left textbox, click convert, and receive a LaTex pseudo-code equivalent in the right textbox. 
 
 ## Why is LatexiPy needed?
 There are currently no easy ways of converting code to pseudocode. The options are doing it manually or through an LLM. Both methods are not ideal. LatexiPy seeks to solve this problem. 
