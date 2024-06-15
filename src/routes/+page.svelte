@@ -1,14 +1,14 @@
 <div class="container">
     <div class="left-box">
         <h2>Python Code</h2>
-        <textarea bind:value={leftText} placeholder="Enter text here"></textarea>
+        <textarea class="input" bind:value={leftText} placeholder="Enter text here"></textarea>
     </div>
     
     <button class="convertButton" on:click={convertText}>Convert</button>
   
     <div class="right-box">
         <h2>Latex</h2>
-        <textarea bind:value={rightText} placeholder="Enter text here"></textarea>
+        <textarea class="input" bind:value={rightText} placeholder="Enter text here"></textarea>
     </div>
 </div>
 
@@ -34,36 +34,51 @@
 
 
 <style>
+    :global(body){
+      margin: 0;
+      padding: 0;
+      background-color: #333;
+      color: #fff;
+      font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
     .container {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background-color: #333;
     }
-  
+
     .left-box,
     .right-box {
       width: 45%;
       padding: 20px;
-      border: 1px solid #ccc;
+      border: 1px solid #555;
       border-radius: 5px;
+      background-color: #444;
+      color: #fff; 
     }
-  
-    input {
-      width: 100%;
+
+    .input {
+      width: 95%;
       padding: 10px;
       font-size: 16px;
-      border: 1px solid #ccc;
+      border: 1px solid #555; 
       border-radius: 5px;
+      background-color: #555; 
+      color: #fff; 
     }
-  
+
     textarea {
       width: 100%;
       height: 200px;
       padding: 10px;
       font-size: 16px;
-      border: 1px solid #ccc;
+      border: 1px solid #555;
       border-radius: 5px;
+      background-color: #555; 
+      color: #fff; 
     }
+
 
     .convertButton {
       background-color: #4CAF50;
