@@ -1,3 +1,5 @@
+<h1 id="latexipy-pseudocode-made-easy">LatexiPy - Pseudocode made easy</h1>
+
 <div class="container">
     <div class="left-box">
         <h2>Python Code</h2>
@@ -10,8 +12,31 @@
         <h2>Latex</h2>
         <textarea class="input" bind:value={rightText} placeholder="Enter text here"></textarea>
     </div>
-</div>
 
+</div>
+  
+<div class="instructions">
+  <h2 id="what-is-latexipy-">What is LatexiPy?</h2>
+  <p>LatexiPy is a python code to latex pseudocode converter. Paste in a valid python function code in the left textbox, click convert, and receive a LaTex pseudo-code equivalent in the right textbox. </p>
+  <h2 id="why-is-latexipy-needed-">Why is LatexiPy needed?</h2>
+  <p>There are currently no easy ways of converting code to pseudocode. The options are doing it manually or through an LLM. Both methods are not ideal. LatexiPy seeks to solve this problem. </p>
+  <h2 id="how-does-it-work-">How does it work?</h2>
+  <p>LatexiPy employs a lexer and a parser to generate an abstract syntax tree of the python function which is then converted to latex pseudocode. The frontend framework chosen is SvelteKit due to its ease of use and high performance.</p>
+  <h2 id="supported-syntax">Supported syntax</h2>
+  <p>LatexiPy supports a large chunk of the python syntax. Int, float and string literals, lists, for and while loops, control flow, function calls and arithmetic expressions are all supported.</p>
+  <h2 id="unsupported-syntax">Unsupported syntax</h2>
+  <p>Some features that are not yet implemented include:</p>
+  <ul>
+      <li>support for calling external functions without a variable assignment</li>
+      <li>list indexing such as <code>list[start:stop:step]</code></li>
+      <li>operators such as <code>*=</code>, <code>/=</code> and others </li>
+  </ul>
+  <p>Additionally, some features are unsupported due to them having no equivalent in latex pseudocode </p>
+  <ul>
+      <li>object.function calls such as <code>list.find()</code></li>
+      <li>list comprehension</li>
+  </ul>
+</div>
 
 <script>
     import { Lexer } from "$lib/lexer";
@@ -103,6 +128,43 @@
     .convertButton:active {
       background-color: #3e8e41;
       transform: scale(1);
+    }
+
+
+    .instructions {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    .instructions h2 {
+        border-bottom: 2px solid #007acc;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        color: #007acc;
+    }
+
+    .instructions p {
+        margin-bottom: 20px;
+        text-align: justify;
+    }
+
+    .instructions ul {
+        margin-bottom: 20px;
+        padding-left: 20px;
+    }
+
+    .instructions ul li {
+        margin-bottom: 10px;
+    }
+
+    .instructions code {
+        background-color: #3b3b3b;
+        padding: 2px 4px;
+        border-radius: 4px;
+        color: #3fe929;
     }
 
 </style>
