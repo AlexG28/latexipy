@@ -3,7 +3,7 @@
 <div class="container">
     <div class="left-box">
         <h2>Python Code</h2>
-        <textarea class="input" bind:value={leftText} placeholder="Enter text here"></textarea>
+        <textarea id="inputTextBox" class="input" bind:value={leftText} on:keydown={handleKeyDown} placeholder="Enter text here"></textarea>
     </div>
     
     <button class="convertButton" on:click={convertText}>Convert</button>
@@ -52,8 +52,30 @@
 
       const converter = new ASTToLatex(ast);
       rightText = converter.convert();
+    }  
+    
+    
+    function handleKeyDown(event) {
+      if (event.key === 'Tab') {
+        console.log("hello!!")
 
+        event.preventDefault();
+
+        const textarea = event.target;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        
+
+        leftText = leftText.substring(0, start) + '    ' + leftText.substring(end);
+
+        setTimeout(() => {
+            textarea.selectionStart = textarea.selectionEnd = start + 4;
+        }, 0);
+
+      }
     }
+
+
 </script>
 
 
