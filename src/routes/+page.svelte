@@ -12,12 +12,11 @@
         <h2>Latex</h2>
         <textarea class="input" bind:value={rightText} placeholder="Enter text here"></textarea>
     </div>
-
 </div>
   
 <div class="instructions">
   <h2 id="what-is-latexipy-">What is LatexiPy?</h2>
-  <p>LatexiPy is a python code to latex pseudocode converter. Paste in a valid python function code in the left textbox, click convert, and receive a LaTex pseudo-code equivalent in the right textbox. </p>
+  <p>LatexiPy is a python code to latex pseudocode converter. Paste in a valid python function in the left textbox, click convert, and receive a LaTex pseudo-code equivalent in the right textbox. </p>
   <h2 id="why-is-latexipy-needed-">Why is LatexiPy needed?</h2>
   <p>There are currently no easy ways of converting code to pseudocode. The options are doing it manually or through an LLM. Both methods are not ideal. LatexiPy seeks to solve this problem. </p>
   <h2 id="how-does-it-work-">How does it work?</h2>
@@ -69,8 +68,25 @@
     .container {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: baseline;
       background-color: #333;
+    }
+
+    @media (max-width: 700px) {
+      .container{
+        flex-direction: column;
+        align-items: center;
+      }
+
+      left-box,
+      .right-box {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+
+      .convertButton {
+        margin-bottom: 20px;
+      }
     }
 
     .left-box,
