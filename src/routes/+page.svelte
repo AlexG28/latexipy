@@ -100,7 +100,7 @@
         align-items: center;
       }
 
-      left-box,
+      .left-box,
       .right-box {
         width: 100%;
         margin-bottom: 20px;

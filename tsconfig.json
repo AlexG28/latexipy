@@ -11,7 +11,8 @@
 		"strict": true,
 		"moduleResolution": "bundler",
 		"module": "ES6",
-		"target": "ES6"
+		"target": "ES6", 
+		"noImplicitAny": false
 	}
 	// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
 	// except $lib which is handled by https://kit.svelte.dev/docs/configuration#files
