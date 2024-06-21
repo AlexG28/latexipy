@@ -40,7 +40,7 @@ test('test tab counting', ()=> {
                 ), 
                 [
                     new Assignment(
-                        new Variable("b"), 
+                        new Variable("b", null), 
                         "ASSIGN", 
                         new NumNode(1)
                     )
@@ -48,8 +48,8 @@ test('test tab counting', ()=> {
                 [],
                 []
             ),
-            new Assignment(new Variable("c"), "ASSIGN", new NumNode(2)),
-            new Assignment(new Variable("d"), "ASSIGN", new NumNode(3)),
+            new Assignment(new Variable("c", null), "ASSIGN", new NumNode(2)),
+            new Assignment(new Variable("d", null), "ASSIGN", new NumNode(3)),
         ]
     );
     expect(result).toEqual(expected);
@@ -77,7 +77,7 @@ test('test nested tab counting', ()=> {
         ), 
         [
             new Assignment(
-                new Variable("d"), 
+                new Variable("d", null), 
                 "ASSIGN", 
                 new NumNode(4)
             )
@@ -94,7 +94,7 @@ test('test nested tab counting', ()=> {
         ), 
         [
             innerIfStatement, 
-            new Assignment(new Variable("f"), "ASSIGN", new NumNode(42)),
+            new Assignment(new Variable("f", null), "ASSIGN", new NumNode(42)),
         ],
         [],
         []
@@ -105,7 +105,7 @@ test('test nested tab counting', ()=> {
         [], 
         [
             outerIfStatement,
-            new Assignment(new Variable("c"), "ASSIGN", new NumNode(2)),
+            new Assignment(new Variable("c", null), "ASSIGN", new NumNode(2)),
         ]
     );
     expect(result).toEqual(expected);
@@ -128,9 +128,9 @@ test('end to end test', ()=> {
     const parser = new Parser(lexer);
     const result: FunctionCall = parser.beginFunction(0);
 
-    const var1 = new Variable("varName");
-    const var2 = new Variable("anotherVar");
-    const var3 = new Variable("lastVar");
+    const var1 = new Variable("varName", null);
+    const var2 = new Variable("anotherVar", null);
+    const var3 = new Variable("lastVar", null);
 
     const firstAssignment = new Assignment(
         var1, 

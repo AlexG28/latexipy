@@ -18,6 +18,7 @@ import {
 
 import { Lexer } from "$lib/lexer";
 import { type elifCondStatement } from "./nodes"
+import { parse } from "svelte/compiler";
 
 export class Parser{
     lexer: Lexer;
@@ -26,7 +27,7 @@ export class Parser{
 
     constructor(lexer: Lexer) {
         this.lexer = lexer;
-        this.currentToken = this.lexer.getNextToken();
+        this.currentToken = this.lexer.getNextToken(); 
         this.currentIndentTabs = 0;
     }
 
@@ -297,32 +298,29 @@ export class Parser{
                 
                 this.consumeToken("LEFTBRACKET");
                 
-                if (!["COLON", "RIGHTBRACKET"].includes(this.tokenType())){
-                    start = this.factor();
+                const parseElement = (): ASTNode | null => {
+                    if (!["COLON", "RIGHTBRACKET"].includes(this.tokenType())){
+                        return this.factor();
+                    } 
+                    return null;
                 }
+                
+                start = parseElement();
+
+                if (this.tokenType() == "COLON")
+                {
+                    this.consumeToken("COLON")
+                }
+                
+                stop = parseElement();
                 
                 if (this.tokenType() == "COLON")
                 {
                     this.consumeToken("COLON")
                 }
                 
-                
-                
-                if (!["COLON", "RIGHTBRACKET"].includes(this.tokenType())){
-                    stop = this.factor();
-                }
-                
-                if (this.tokenType() == "COLON")
-                {
-                    this.consumeToken("COLON")
-                }
-                
+                step = parseElement();
 
-
-                if (!["COLON", "RIGHTBRACKET"].includes(this.tokenType())){
-                    step = this.factor();
-                }
-                
                 if (this.tokenType() == "COLON")
                 {
                     this.consumeToken("COLON")
