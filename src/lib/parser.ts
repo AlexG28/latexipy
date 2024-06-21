@@ -292,10 +292,6 @@ export class Parser{
             return this.functionArguments(name);
         } else {
             if (this.tokenType() == "LEFTBRACKET"){
-                let start: ASTNode | null = null; 
-                let stop: ASTNode | null = null; 
-                let step: ASTNode | null = null; 
-                
                 this.consumeToken("LEFTBRACKET");
                 
                 const parseElement = (): ASTNode | null => {
@@ -304,31 +300,18 @@ export class Parser{
                     } 
                     return null;
                 }
-                
-                start = parseElement();
 
-                if (this.tokenType() == "COLON")
-                {
-                    this.consumeToken("COLON")
-                }
-                
-                stop = parseElement();
-                
-                if (this.tokenType() == "COLON")
-                {
-                    this.consumeToken("COLON")
-                }
-                
-                step = parseElement();
-
-                if (this.tokenType() == "COLON")
-                {
-                    this.consumeToken("COLON")
+                let elems: (ASTNode | null) [] = [null, null, null];
+                for(let i = 0; i < 3; i++){
+                    elems[i] = parseElement();
+                    if (this.tokenType() == "COLON")
+                    {
+                        this.consumeToken("COLON")
+                    } 
                 }
                 this.consumeToken("RIGHTBRACKET")
 
-
-                const slice = new Slice(start, stop, step)
+                const slice = new Slice(elems[0], elems[1], elems[2])
                 return new Variable(name, slice)
             } 
 
