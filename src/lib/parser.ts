@@ -12,7 +12,8 @@ import {
     ForLoop,
     ExternalFunction,
     List,
-    StringNode
+    StringNode,
+    Slice
 } from "./nodes";
 
 import { Lexer } from "$lib/lexer";
@@ -172,7 +173,7 @@ export class Parser{
         statements = this.collectStatements(indent);
 
         return new ForLoop(
-            new Variable(index), 
+            new Variable(index, null), 
             func, 
             statements
         )
@@ -253,7 +254,7 @@ export class Parser{
         let value: ASTNode;
         let operatorType: string;
 
-        variable = new Variable(String(this.currentToken.value));
+        variable = new Variable(String(this.currentToken.value), null);
         this.consumeToken("ID");
         operatorType = this.tokenType();
         
@@ -289,7 +290,51 @@ export class Parser{
         if (this.tokenType() == "LPAREN"){
             return this.functionArguments(name);
         } else {
-            return new Variable(name)
+            if (this.tokenType() == "LEFTBRACKET"){
+                let start: ASTNode | null = null; 
+                let stop: ASTNode | null = null; 
+                let step: ASTNode | null = null; 
+                
+                this.consumeToken("LEFTBRACKET");
+                
+                if (!["COLON", "RIGHTBRACKET"].includes(this.tokenType())){
+                    start = this.factor();
+                }
+                
+                if (this.tokenType() == "COLON")
+                {
+                    this.consumeToken("COLON")
+                }
+                
+                
+                
+                if (!["COLON", "RIGHTBRACKET"].includes(this.tokenType())){
+                    stop = this.factor();
+                }
+                
+                if (this.tokenType() == "COLON")
+                {
+                    this.consumeToken("COLON")
+                }
+                
+
+
+                if (!["COLON", "RIGHTBRACKET"].includes(this.tokenType())){
+                    step = this.factor();
+                }
+                
+                if (this.tokenType() == "COLON")
+                {
+                    this.consumeToken("COLON")
+                }
+                this.consumeToken("RIGHTBRACKET")
+
+
+                const slice = new Slice(start, stop, step)
+                return new Variable(name, slice)
+            } 
+
+            return new Variable(name, null);
         }
     }
 

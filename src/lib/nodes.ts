@@ -85,12 +85,30 @@ export class StringNode extends ASTNode {
     }
 }
 
+export class Slice {
+    start: ASTNode | null;
+    stop: ASTNode | null;
+    step: ASTNode | null;
+
+    constructor(start: ASTNode | null, stop: ASTNode | null, step: ASTNode | null) {
+        this.start = start
+        this.stop = stop
+        this.step = step
+    }
+
+    toLatex(): string {
+        const elements = [this.start, this.stop, this.step].join(":")
+        return `[${elements}]`
+    }
+}
+
 export class Variable extends ASTNode{
     name: string; 
-    
-    constructor(name: string) {
+    slice: Slice | null;
+    constructor(name: string, slice: Slice | null) {
         super("Variable");
         this.name = name;
+        this.slice = slice
     }
 
     toLatex(): string {
