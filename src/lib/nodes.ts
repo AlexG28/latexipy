@@ -97,8 +97,39 @@ export class Slice {
     }
 
     toLatex(): string {
-        const elements = [this.start, this.stop, this.step].join(":")
-        return `[${elements}]`
+        let startLatex = ""
+        let stopLatex = ""
+        let stepLatex = ""
+
+        if (this.start != null) {
+            startLatex = this.start.toLatex();
+        }
+        if (this.stop != null) {
+            stopLatex = this.stop.toLatex();
+        }
+        if (this.step != null) {
+            stepLatex = this.step.toLatex();
+        }
+        
+        if (this.start != null && this.stop != null && this.step != null) {
+            const elements =  [startLatex, stopLatex, stepLatex].join(":")
+            return `[${elements}]`;
+        }
+
+        if (this.start != null && this.stop != null && this.step == null) {
+            const elements =  [startLatex, stopLatex].join(":")
+            return `[${elements}]`;
+        } 
+        
+        
+        if (this.start != null && this.stop == null && this.step == null) {
+            const elements =  [startLatex].join(":")
+            return `[${elements}]`;
+        } 
+
+
+        const elements =  [startLatex, stopLatex, stepLatex].join(":")
+        return `[${elements}]`;
     }
 }
 
@@ -112,6 +143,10 @@ export class Variable extends ASTNode{
     }
 
     toLatex(): string {
+        if (this.slice != null){
+            const sliceLatex = this.slice.toLatex();
+            return `${this.name}${sliceLatex}`
+        }
         return `${this.name}`;
     }
 }
@@ -313,12 +348,12 @@ export class Assignment extends ASTNode {
         let output = "";
 
         if(["ADDASSIGN", "SUBTRACTASSIGN"].includes(this.operator)){
-            const varName = this.variable.name;
+            const varName = this.variable.toLatex();
             const varVal = this.value.toLatex();
             const operatorChar = this.operationMap[this.operator];
             output = `\\State $${varName} \\gets ${varName} ${operatorChar} ${varVal}$`
         } else {
-            const varName = this.variable.name;
+            const varName = this.variable.toLatex();
             const varVal = this.value.toLatex();
             output =  `\\State $${varName} \\gets ${varVal}$`
         }
