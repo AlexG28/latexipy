@@ -13,7 +13,9 @@ import {
     ExternalFunction,
     List,
     StringNode,
-    Slice
+    Slice, 
+    KeyValue,
+    Dict
 } from "./nodes";
 
 import { Lexer } from "$lib/lexer";
@@ -200,6 +202,34 @@ export class Parser{
         
         return new List(elements)
     }
+    
+    processDict(): Dict {
+        let elements: KeyValue[] = [];
+        
+        this.consumeToken("LEFTBRACE")
+        if (this.tokenType() != "RIGHTBRACE"){
+            for (;;) {
+                
+                let key = this.expression();
+                this.consumeToken("COLON")
+                let value = this.expression();
+
+                const keyValue = new KeyValue(key, value);
+
+                elements.push(keyValue);
+
+                if (this.tokenType() == "COMMA"){
+                    this.consumeToken("COMMA")
+                } else if (this.tokenType() == "RIGHTBRACE"){
+                    break;
+                }
+            }
+        }
+
+        this.consumeToken("RIGHTBRACE")
+        
+        return new Dict(elements)
+    }
 
 
     collectStatements(indent: number): ASTNode[] {
@@ -375,6 +405,9 @@ export class Parser{
             }
             case "LEFTBRACKET": {
                 return this.processList();
+            }
+            case "LEFTBRACE": {
+                return this.processDict();
             }
             default: {
                 throw new Error("Invalid expression");

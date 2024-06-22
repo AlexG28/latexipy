@@ -121,12 +121,10 @@ export class Slice {
             return `[${elements}]`;
         } 
         
-        
         if (this.start != null && this.stop == null && this.step == null) {
             const elements =  [startLatex].join(":")
             return `[${elements}]`;
         } 
-
 
         const elements =  [startLatex, stopLatex, stepLatex].join(":")
         return `[${elements}]`;
@@ -156,6 +154,35 @@ export class List extends ASTNode{
     
     constructor(elements: ASTNode[]){
         super("List")
+        this.elements = elements
+    }
+
+    toLatex(): string {
+        const elements = this.elements.map(elem => elem.toLatex()).join(",");
+        
+        return `[${elements}]`
+    }
+}
+
+export class KeyValue {
+    key: ASTNode;
+    value: ASTNode;
+
+    constructor(key: ASTNode, value: ASTNode) {
+        this.key = key;
+        this.value = value;
+    }
+
+    toLatex(): string {
+        return `${this.key.toLatex()}:${this.value.toLatex()}`;
+    }
+}
+
+export class Dict extends ASTNode{
+    elements: KeyValue[];
+    
+    constructor(elements: KeyValue[]){
+        super("Dict")
         this.elements = elements
     }
 

@@ -196,6 +196,14 @@ export class Lexer {
                         this.advance();
                         return new Token('LEFTBRACKET', '[');    
                     }
+                    case '}': {
+                        this.advance();
+                        return new Token('RIGHTBRACE', '}');    
+                    }
+                    case '{': {
+                        this.advance();
+                        return new Token('LEFTBRACE', '{');    
+                    }
                     case ':': {
                         this.advance();
                         return new Token('COLON', ':');    

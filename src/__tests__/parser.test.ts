@@ -12,7 +12,9 @@ import {
     ForLoop,
     List,
     StringNode,
-    Slice
+    Slice,
+    Dict,
+    KeyValue
 } from "$lib/nodes";
 
 import { Parser } from "$lib/parser";
@@ -633,14 +635,14 @@ test('test for loop variable', ()=> {
 })
 
 
-test('list assignment', ()=> {
-    const inputText = `var1 = [1.28*3,2,3.01,"this is the way"]`;
+test('process assignment', ()=> {
+    const inputText = `[1.28*3,2,3.01,"this is the way"]`;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result = parser.assignment(0);
+    const result = parser.processList();
 
-    const list = new List(
+    const expected = new List(
         [
             new BinOpNode(
                 new NumNode(1.28),
@@ -653,11 +655,29 @@ test('list assignment', ()=> {
         ]        
     )
 
-    const expected = new Assignment(
-        new Variable("var1", null), 
-        "ASSIGN", 
-        list
-    )
+    expect(result).toEqual(expected);
+})
+
+
+test('process dictionary', ()=> {
+    const inputText = `{1:two, "3":[4]}`;
+
+    const lexer = new Lexer(inputText);
+    const parser = new Parser(lexer);
+    const result = parser.processDict();
+
+    const expected = new Dict(
+        [
+            new KeyValue(
+                new NumNode(1),
+                new Variable("two", null)
+            ),
+            new KeyValue(
+                new StringNode("3"),
+                new List([new NumNode(4)])
+            )
+        ]
+    );
 
     expect(result).toEqual(expected);
 })
