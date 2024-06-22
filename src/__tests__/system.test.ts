@@ -240,3 +240,47 @@ test('system test 4', ()=> {
 
     expect(result).toEqual(expected);
 })
+
+
+test('system test 5', ()=> {
+
+    const input_text = 
+`def countFrequencies(numbers):
+    frequencyDict = {}
+    for element in elements:
+        if element > frequencyDict:
+            frequencyDict[element] = frequencyDict[element] + 1
+        else:
+            frequencyDict[element] = 1
+    return frequencyDict[1:9:1]`;
+   
+    const lexer = new Lexer(input_text);
+    const parser = new Parser(lexer);
+    const ast = parser.beginFunction(0);
+
+    const converter = new ASTToLatex(ast);
+    const result = converter.convert();
+
+    const expected = dedent(
+        `\\begin{algorithm}
+        \\caption{countFrequencies}
+        \\begin{algorithmic}
+        \\Function{countFrequencies}{numbers}
+        \\State $frequencyDict \\gets \\{\\}$
+
+        \\For{$element$ in $elements$}
+        
+        \\If{$element > frequencyDict$}
+        \\State $frequencyDict[element] \\gets frequencyDict[element] + 1$
+        
+        \\Else
+        \\State $frequencyDict[element] \\gets 1$
+        \\EndIf
+        \\EndFor
+        \\State \\Return frequencyDict[1:9:1]
+        \\EndFunction
+        \\end{algorithmic}
+        \\end{algorithm}`);
+
+    expect(result).toEqual(expected);
+})

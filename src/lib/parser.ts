@@ -285,8 +285,10 @@ export class Parser{
         let value: ASTNode;
         let operatorType: string;
 
-        variable = new Variable(String(this.currentToken.value), null);
+        const variableName = String(this.currentToken.value);
         this.consumeToken("ID");
+        variable = this.processVariableSlice(variableName);
+
         operatorType = this.tokenType();
         
         this.consumeAssign();
@@ -314,6 +316,34 @@ export class Parser{
         return new ExternalFunction(name, args);
     }
 
+    processVariableSlice(name: string): Variable {
+        if (this.tokenType() == "LEFTBRACKET"){
+            this.consumeToken("LEFTBRACKET");
+            
+            const parseElement = (): ASTNode | null => {
+                if (!["COLON", "RIGHTBRACKET"].includes(this.tokenType())){
+                    return this.factor();
+                } 
+                return null;
+            }
+
+            let elems: (ASTNode | null) [] = [null, null, null];
+            for(let i = 0; i < 3; i++){
+                elems[i] = parseElement();
+                if (this.tokenType() == "COLON")
+                {
+                    this.consumeToken("COLON")
+                } 
+            }
+            this.consumeToken("RIGHTBRACKET")
+
+            const slice = new Slice(elems[0], elems[1], elems[2])
+            return new Variable(name, slice)
+        } 
+
+        return new Variable(name, null);
+    }
+
     variableOrFunction(): Variable | ExternalFunction{
         const name = String(this.currentToken.value);
         this.consumeToken("ID");
@@ -321,31 +351,7 @@ export class Parser{
         if (this.tokenType() == "LPAREN"){
             return this.functionArguments(name);
         } else {
-            if (this.tokenType() == "LEFTBRACKET"){
-                this.consumeToken("LEFTBRACKET");
-                
-                const parseElement = (): ASTNode | null => {
-                    if (!["COLON", "RIGHTBRACKET"].includes(this.tokenType())){
-                        return this.factor();
-                    } 
-                    return null;
-                }
-
-                let elems: (ASTNode | null) [] = [null, null, null];
-                for(let i = 0; i < 3; i++){
-                    elems[i] = parseElement();
-                    if (this.tokenType() == "COLON")
-                    {
-                        this.consumeToken("COLON")
-                    } 
-                }
-                this.consumeToken("RIGHTBRACKET")
-
-                const slice = new Slice(elems[0], elems[1], elems[2])
-                return new Variable(name, slice)
-            } 
-
-            return new Variable(name, null);
+            return this.processVariableSlice(name);
         }
     }
 
