@@ -12,7 +12,9 @@ import {
     ForLoop,
     List,
     StringNode,
-    Slice
+    Slice,
+    Dict,
+    KeyValue
 } from "$lib/nodes";
 
 import { expect, test } from 'vitest'
@@ -459,6 +461,27 @@ test('test list', ()=> {
     const result = list.toLatex();
 
     const expected = `[1 * 3,2,3,varone]`;
+    expect(result).toEqual(expected);
+})
+
+
+test('test dict', ()=> {
+    const dict = new Dict(
+        [
+            new KeyValue(
+                new NumNode(1),
+                new Variable("helloThere", null)
+            ),
+            new KeyValue(
+                new StringNode("var33"),
+                new List([new NumNode(4), new NumNode(5)])
+            )
+        ]
+    );
+
+    const result = dict.toLatex();
+
+    const expected = `\\{1:helloThere,\\texttt{"var33"}:[4,5]\\}`;
     expect(result).toEqual(expected);
 })
 

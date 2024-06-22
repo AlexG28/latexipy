@@ -189,7 +189,7 @@ export class Dict extends ASTNode{
     toLatex(): string {
         const elements = this.elements.map(elem => elem.toLatex()).join(",");
         
-        return `[${elements}]`
+        return `\\{${elements}\\}`
     }
 }
 
