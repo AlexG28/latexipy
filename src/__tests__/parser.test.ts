@@ -101,11 +101,11 @@ test('test function declaration with multiple arguments', ()=> {
 
 
 test('test integer variable assignment', ()=> {
-    const inputText = `varName = 14.9`;
+    const inputText = `= 14.9`;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: Assignment = parser.assignment(0);
+    const result = parser.assignment('varName');
 
     const expected = new Assignment(new Variable("varName", null),"ASSIGN", new NumNode(14.9));
 
@@ -114,11 +114,11 @@ test('test integer variable assignment', ()=> {
 
 
 test('test string variable assignment', ()=> {
-    const inputText = `varName = \"The deathstar weighted about 8.38 x 10e18 kg\"`;
+    const inputText = ` = \"The deathstar weighted about 8.38 x 10e18 kg\"`;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result = parser.assignment(0);
+    const result = parser.assignment('varName');
 
     const expected = new Assignment(
         new Variable("varName", null),
@@ -171,11 +171,11 @@ test('test function with multiple integer assignments', ()=> {
 
 
 test('test expressions 1', ()=> {
-    const inputText = `anotherVar = (19 + thisVar) * 4`;
+    const inputText = ` = (19 + thisVar) * 4`;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: Assignment = parser.assignment(0);
+    const result: Assignment = parser.assignment('anotherVar');
 
     const anotherVar = new Variable("anotherVar", null);
     const thisVar = new Variable("thisVar", null);
@@ -199,11 +199,11 @@ test('test expressions 1', ()=> {
 
 
 test('test expressions 2', ()=> {
-    const inputText = `anotherVar = (anotherVar / thisVar) - (233*2)`;
+    const inputText = ` = (anotherVar / thisVar) - (233*2)`;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: Assignment = parser.assignment(0);
+    const result: Assignment = parser.assignment('anotherVar');
 
     const anotherVar = new Variable("anotherVar", null);
     const thisVar = new Variable("thisVar", null);
@@ -232,11 +232,11 @@ test('test expressions 2', ()=> {
 
 
 test('test boolean expression', ()=> {
-    const inputText = `anotherVar = 19 > 4.82`;
+    const inputText = ` = 19 > 4.82`;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result: Assignment = parser.assignment(0);
+    const result: Assignment = parser.assignment('anotherVar');
 
     const anotherVar = new Variable("anotherVar", null);
 
@@ -267,11 +267,11 @@ test('test simple return statement', ()=> {
 })
 
 test('test expression with complex operators', ()=> {
-    const inputText = `varThree += (varOne >= varTwo)`;
+    const inputText = ` += (varOne >= varTwo)`;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result = parser.assignment(0);
+    const result = parser.assignment('varThree');
 
     const bracket = new BinOpNode(
         new Variable("varOne", null),
@@ -533,29 +533,12 @@ test('test while statement', ()=> {
 })
 
 
-test('test external function call', ()=> {
-    const inputText = `a = perform()`;
-
-    const lexer = new Lexer(inputText);
-    const parser = new Parser(lexer);
-    const result = parser.assignment(0);
-
-    const expected = new Assignment(
-        new Variable("a", null), 
-        "ASSIGN", 
-        new ExternalFunction("perform", [])
-    )
-
-    expect(result).toEqual(expected);
-})
-
-
 test('test external function call with arguments', ()=> {
-    const inputText = `delta = hyperLuminar(time, distance)`;
+    const inputText = ` = hyperLuminar(time, distance)`;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result = parser.assignment(0);
+    const result = parser.assignment('delta');
 
     const expected = new Assignment(
         new Variable("delta", null), 
@@ -567,11 +550,11 @@ test('test external function call with arguments', ()=> {
 })
 
 test('test external function call with expression arguments', ()=> {
-    const inputText = `delta = hyperLuminar(1+var3,func(2))`;
+    const inputText = ` = hyperLuminar(1+var3,func(2))`;
 
     const lexer = new Lexer(inputText);
     const parser = new Parser(lexer);
-    const result = parser.assignment(0);
+    const result = parser.assignment('delta');
 
     const arg1 = new BinOpNode(
         new NumNode(1), 

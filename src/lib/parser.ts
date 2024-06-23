@@ -255,7 +255,7 @@ export class Parser{
                    break; 
                 } 
                 case "ID": { 
-                    statement.push(this.assignment(indent + 1));
+                    statement.push(this.assignmentOrFunction());
                     break; 
                 } 
                 case "NEWLINE": {
@@ -271,6 +271,18 @@ export class Parser{
         return statement;
     }
 
+
+    assignmentOrFunction(): Assignment | ExternalFunction {
+        const variableName = String(this.currentToken.value);
+        this.consumeToken("ID");
+
+        if (this.tokenType() == "LPAREN"){
+            return this.functionArguments(variableName);
+        } else {
+            return this.assignment(variableName);
+        }
+    }
+
     return(): Return {
         let value: ASTNode;
         
@@ -280,13 +292,12 @@ export class Parser{
         return new Return(value);
     }
 
-    assignment(indent: number): Assignment{
+
+    assignment(variableName: string): Assignment{
         let variable: Variable;
         let value: ASTNode;
         let operatorType: string;
 
-        const variableName = String(this.currentToken.value);
-        this.consumeToken("ID");
         variable = this.processVariableSlice(variableName);
 
         operatorType = this.tokenType();
