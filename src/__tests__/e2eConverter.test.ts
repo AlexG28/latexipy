@@ -22,13 +22,13 @@ const dedent = (str: string): string => {
 test('General test', ()=> {
     const ifNode = new IfStatement(
         new BinOpNode(
-            new Variable("sum"),
+            new Variable("sum", null),
             new Token("GREATERTHAN", ">"),
             new NumNode(420),
         ), 
         [
             new Assignment(
-                new Variable("dividend"),
+                new Variable("dividend", null),
                 "ASSIGN", 
                 new NumNode(0)
             )
@@ -40,7 +40,7 @@ test('General test', ()=> {
     
     const condition = new BinOpNode(
         new BinOpNode(
-            new Variable("sum"),
+            new Variable("sum", null),
             new Token("DIVIDE", "/"),
             new NumNode(4)
         ),
@@ -54,7 +54,7 @@ test('General test', ()=> {
 
     const binop = new BinOpNode(
         new BinOpNode(
-            new Variable("sum"),
+            new Variable("sum", null),
             new Token("DIVIDE", "/"),
             new NumNode(4)
         ),
@@ -67,13 +67,13 @@ test('General test', ()=> {
     )
     
     const assignemnt = new Assignment(
-        new Variable("dividend"),
+        new Variable("dividend", null),
         "ASSIGN", 
         binop
     )
 
     const returnNode = new Return(
-        new Variable("dividend")
+        new Variable("dividend", null)
     )
     
     const whileStatement = new WhileStatement(
