@@ -14,8 +14,6 @@ LatexiPy supports a large chunk of the python syntax. Int, float and string lite
 
 ## Unsupported syntax
 Some features that are not yet implemented include:
-- support for calling external functions without a variable assignment
-- list indexing such as `list[start:stop:step]`
 - operators such as `*=`, `/=` and others 
 
 Additionally, some features are unsupported due to them having no equivalent in latex pseudocode 

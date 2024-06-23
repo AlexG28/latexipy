@@ -12,11 +12,15 @@ import {
     ForLoop,
     ExternalFunction,
     List,
-    StringNode
+    StringNode,
+    Slice, 
+    KeyValue,
+    Dict
 } from "./nodes";
 
 import { Lexer } from "$lib/lexer";
 import { type elifCondStatement } from "./nodes"
+import { parse } from "svelte/compiler";
 
 export class Parser{
     lexer: Lexer;
@@ -25,7 +29,7 @@ export class Parser{
 
     constructor(lexer: Lexer) {
         this.lexer = lexer;
-        this.currentToken = this.lexer.getNextToken();
+        this.currentToken = this.lexer.getNextToken(); 
         this.currentIndentTabs = 0;
     }
 
@@ -172,7 +176,7 @@ export class Parser{
         statements = this.collectStatements(indent);
 
         return new ForLoop(
-            new Variable(index), 
+            new Variable(index, null), 
             func, 
             statements
         )
@@ -197,6 +201,34 @@ export class Parser{
         this.consumeToken("RIGHTBRACKET")
         
         return new List(elements)
+    }
+    
+    processDict(): Dict {
+        let elements: KeyValue[] = [];
+        
+        this.consumeToken("LEFTBRACE")
+        if (this.tokenType() != "RIGHTBRACE"){
+            for (;;) {
+                
+                let key = this.expression();
+                this.consumeToken("COLON")
+                let value = this.expression();
+
+                const keyValue = new KeyValue(key, value);
+
+                elements.push(keyValue);
+
+                if (this.tokenType() == "COMMA"){
+                    this.consumeToken("COMMA")
+                } else if (this.tokenType() == "RIGHTBRACE"){
+                    break;
+                }
+            }
+        }
+
+        this.consumeToken("RIGHTBRACE")
+        
+        return new Dict(elements)
     }
 
 
@@ -223,7 +255,7 @@ export class Parser{
                    break; 
                 } 
                 case "ID": { 
-                    statement.push(this.assignment(indent + 1));
+                    statement.push(this.assignmentOrFunction());
                     break; 
                 } 
                 case "NEWLINE": {
@@ -239,6 +271,18 @@ export class Parser{
         return statement;
     }
 
+
+    assignmentOrFunction(): Assignment | ExternalFunction {
+        const variableName = String(this.currentToken.value);
+        this.consumeToken("ID");
+
+        if (this.tokenType() == "LPAREN"){
+            return this.functionArguments(variableName);
+        } else {
+            return this.assignment(variableName);
+        }
+    }
+
     return(): Return {
         let value: ASTNode;
         
@@ -248,13 +292,14 @@ export class Parser{
         return new Return(value);
     }
 
-    assignment(indent: number): Assignment{
+
+    assignment(variableName: string): Assignment{
         let variable: Variable;
         let value: ASTNode;
         let operatorType: string;
 
-        variable = new Variable(String(this.currentToken.value));
-        this.consumeToken("ID");
+        variable = this.processVariableSlice(variableName);
+
         operatorType = this.tokenType();
         
         this.consumeAssign();
@@ -282,6 +327,34 @@ export class Parser{
         return new ExternalFunction(name, args);
     }
 
+    processVariableSlice(name: string): Variable {
+        if (this.tokenType() == "LEFTBRACKET"){
+            this.consumeToken("LEFTBRACKET");
+            
+            const parseElement = (): ASTNode | null => {
+                if (!["COLON", "RIGHTBRACKET"].includes(this.tokenType())){
+                    return this.factor();
+                } 
+                return null;
+            }
+
+            let elems: (ASTNode | null) [] = [null, null, null];
+            for(let i = 0; i < 3; i++){
+                elems[i] = parseElement();
+                if (this.tokenType() == "COLON")
+                {
+                    this.consumeToken("COLON")
+                } 
+            }
+            this.consumeToken("RIGHTBRACKET")
+
+            const slice = new Slice(elems[0], elems[1], elems[2])
+            return new Variable(name, slice)
+        } 
+
+        return new Variable(name, null);
+    }
+
     variableOrFunction(): Variable | ExternalFunction{
         const name = String(this.currentToken.value);
         this.consumeToken("ID");
@@ -289,7 +362,7 @@ export class Parser{
         if (this.tokenType() == "LPAREN"){
             return this.functionArguments(name);
         } else {
-            return new Variable(name)
+            return this.processVariableSlice(name);
         }
     }
 
@@ -349,6 +422,9 @@ export class Parser{
             }
             case "LEFTBRACKET": {
                 return this.processList();
+            }
+            case "LEFTBRACE": {
+                return this.processDict();
             }
             default: {
                 throw new Error("Invalid expression");

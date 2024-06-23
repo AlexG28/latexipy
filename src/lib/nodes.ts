@@ -85,15 +85,66 @@ export class StringNode extends ASTNode {
     }
 }
 
-export class Variable extends ASTNode{
-    name: string; 
-    
-    constructor(name: string) {
-        super("Variable");
-        this.name = name;
+export class Slice {
+    start: ASTNode | null;
+    stop: ASTNode | null;
+    step: ASTNode | null;
+
+    constructor(start: ASTNode | null, stop: ASTNode | null, step: ASTNode | null) {
+        this.start = start
+        this.stop = stop
+        this.step = step
     }
 
     toLatex(): string {
+        let startLatex = ""
+        let stopLatex = ""
+        let stepLatex = ""
+
+        if (this.start != null) {
+            startLatex = this.start.toLatex();
+        }
+        if (this.stop != null) {
+            stopLatex = this.stop.toLatex();
+        }
+        if (this.step != null) {
+            stepLatex = this.step.toLatex();
+        }
+        
+        if (this.start != null && this.stop != null && this.step != null) {
+            const elements =  [startLatex, stopLatex, stepLatex].join(":")
+            return `[${elements}]`;
+        }
+
+        if (this.start != null && this.stop != null && this.step == null) {
+            const elements =  [startLatex, stopLatex].join(":")
+            return `[${elements}]`;
+        } 
+        
+        if (this.start != null && this.stop == null && this.step == null) {
+            const elements =  [startLatex].join(":")
+            return `[${elements}]`;
+        } 
+
+        const elements =  [startLatex, stopLatex, stepLatex].join(":")
+        return `[${elements}]`;
+    }
+}
+
+export class Variable extends ASTNode{
+    name: string; 
+    slice: Slice | null;
+    constructor(name: string, slice: Slice | null) {
+        super("Variable");
+        this.name = name;
+        this.slice = slice
+    }
+
+    toLatex(): string {
+        if (this.slice != null){
+            const sliceLatex = this.slice.toLatex();
+            return `${this.name}${sliceLatex}`
+        }
         return `${this.name}`;
     }
 }
@@ -110,6 +161,35 @@ export class List extends ASTNode{
         const elements = this.elements.map(elem => elem.toLatex()).join(",");
         
         return `[${elements}]`
+    }
+}
+
+export class KeyValue {
+    key: ASTNode;
+    value: ASTNode;
+
+    constructor(key: ASTNode, value: ASTNode) {
+        this.key = key;
+        this.value = value;
+    }
+
+    toLatex(): string {
+        return `${this.key.toLatex()}:${this.value.toLatex()}`;
+    }
+}
+
+export class Dict extends ASTNode{
+    elements: KeyValue[];
+    
+    constructor(elements: KeyValue[]){
+        super("Dict")
+        this.elements = elements
+    }
+
+    toLatex(): string {
+        const elements = this.elements.map(elem => elem.toLatex()).join(",");
+        
+        return `\\{${elements}\\}`
     }
 }
 
@@ -295,12 +375,12 @@ export class Assignment extends ASTNode {
         let output = "";
 
         if(["ADDASSIGN", "SUBTRACTASSIGN"].includes(this.operator)){
-            const varName = this.variable.name;
+            const varName = this.variable.toLatex();
             const varVal = this.value.toLatex();
             const operatorChar = this.operationMap[this.operator];
             output = `\\State $${varName} \\gets ${varName} ${operatorChar} ${varVal}$`
         } else {
-            const varName = this.variable.name;
+            const varName = this.variable.toLatex();
             const varVal = this.value.toLatex();
             output =  `\\State $${varName} \\gets ${varVal}$`
         }
