@@ -17,6 +17,7 @@
 <div class="instructions">
   <h2 id="what-is-latexipy-">What is LatexiPy?</h2>
   <p>LatexiPy is a python code to latex pseudocode converter. Paste in a valid python function in the left textbox, click convert, and receive a LaTex pseudo-code equivalent in the right textbox. </p>
+  <p>Ensure that you also paste in the following imports into latex: <code>algorithm</code> and <code>algpseudocodex</code> </p>
   <h2 id="why-is-latexipy-needed-">Why is LatexiPy needed?</h2>
   <p>There are currently no easy ways of converting code to pseudocode. The options are doing it manually or through an LLM. Both methods are not ideal. LatexiPy seeks to solve this problem. </p>
   <h2 id="how-does-it-work-">How does it work?</h2>
@@ -26,8 +27,6 @@
   <h2 id="unsupported-syntax">Unsupported syntax</h2>
   <p>Some features that are not yet implemented include:</p>
   <ul>
-      <li>support for calling external functions without a variable assignment</li>
-      <li>list indexing such as <code>list[start:stop:step]</code></li>
       <li>operators such as <code>*=</code>, <code>/=</code> and others </li>
   </ul>
   <p>Additionally, some features are unsupported due to them having no equivalent in latex pseudocode </p>
