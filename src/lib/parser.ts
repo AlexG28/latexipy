@@ -57,7 +57,7 @@ export class Parser{
             }
             
         } else {
-            throw new Error(`Unexpected token: "${this.currentToken.value}" instead of ${tokenType}`);
+            throw new Error(`Unexpected token "${this.currentToken.value}" instead of ${tokenType} on line ${this.lexer.getLineNumber()}`);
         }
     }
 
@@ -266,7 +266,7 @@ export class Parser{
                     break;
                 }
                 default: { 
-                   throw new Error(`Invalid statement keyword: ${this.tokenValue()}`);
+                   throw new Error(`Invalid statement keyword ${this.tokenValue()} on line ${this.lexer.getLineNumber()}`);
                 } 
             }
         }
@@ -437,7 +437,7 @@ export class Parser{
                 return this.processDict();
             }
             default: {
-                throw new Error(`Invalid character in expression: ${this.currentToken.value}`);
+                throw new Error(`Invalid character in expression ${this.currentToken.value} on line ${this.lexer.getLineNumber()}`);
             }
         }
     }

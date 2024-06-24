@@ -46,8 +46,6 @@
     let rightText = '';
 
     function convertText() {
-
-
       try {
         const lexer = new Lexer(leftText);
         const parser = new Parser(lexer);
