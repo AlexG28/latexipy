@@ -136,10 +136,18 @@ export class Lexer {
                 let operator = '';
                 
                 while(operatorChars.includes(this.currentChar)){
+                    if (operator.length == 2) {
+                        break;
+                    }
+                    if (operator.length == 1 && operator.at(-1) == "=") {
+                        if (this.currentChar != "="){
+                            break;
+                        }
+                    }
                     operator += this.currentChar;
                     this.advance();
                 }
-                
+
                 switch(operator) {
                     case '+': {
                         return new Token('PLUS', '+');    

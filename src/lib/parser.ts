@@ -20,7 +20,6 @@ import {
 
 import { Lexer } from "$lib/lexer";
 import { type elifCondStatement } from "./nodes"
-import { parse } from "svelte/compiler";
 
 export class Parser{
     lexer: Lexer;
@@ -420,6 +419,12 @@ export class Parser{
             }
             case "ID": {
                 return this.variableOrFunction();
+            }
+            case "MINUS": {
+                this.consumeToken("MINUS")
+                const returnVal = new NumNode(-1 * Number(this.currentToken.value))
+                this.consumeToken("INTEGER");
+                return returnVal;
             }
             case "LEFTBRACKET": {
                 return this.processList();

@@ -45,9 +45,9 @@ test('test function declaration with no arguments', ()=> {
 test('test empty lines', ()=> {
     const inputText = 
     `def functionName():
-        a=3
+        a= -3
 
-        b=3
+        b=-19
 
 
         c=3
@@ -57,8 +57,8 @@ test('test empty lines', ()=> {
     const parser = new Parser(lexer);
     const result: FunctionCall = parser.beginFunction(0);
 
-    const assignment1 = new Assignment(new Variable('a', null),"ASSIGN", new NumNode(3))
-    const assignment2 = new Assignment(new Variable('b', null),"ASSIGN", new NumNode(3))
+    const assignment1 = new Assignment(new Variable('a', null),"ASSIGN", new NumNode(-3))
+    const assignment2 = new Assignment(new Variable('b', null),"ASSIGN", new NumNode(-19))
     const assignment3 = new Assignment(new Variable('c', null),"ASSIGN", new NumNode(3))
 
     const expected = new FunctionCall(
