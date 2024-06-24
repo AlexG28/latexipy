@@ -28,6 +28,7 @@
   <p>Some features that are not yet implemented include:</p>
   <ul>
       <li>operators such as <code>*=</code>, <code>/=</code> and others </li>
+      <li>negative signs in front of variables. Instead of writing <code>-num</code>, you can write <code>-1*num</code> </li>
   </ul>
   <p>Additionally, some features are unsupported due to them having no equivalent in latex pseudocode </p>
   <ul>
