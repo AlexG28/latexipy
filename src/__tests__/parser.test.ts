@@ -339,7 +339,7 @@ test('test if statement', ()=> {
 
 test('test if else condition', ()=> {
     const inputText = 
-`if 10 > 4:
+`if 10 in [4]:
     a=\"Its a trap\"
 else:
     a=2
@@ -352,8 +352,8 @@ else:
     const expected = new IfStatement(
         new BinOpNode(
             new NumNode(10),
-            new Token("GREATERTHAN", ">"),
-            new NumNode(4)
+            new Token("IN", "in"),
+            new List([new NumNode(4)])
         ), 
         [
             new Assignment(
