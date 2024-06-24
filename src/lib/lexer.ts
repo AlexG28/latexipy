@@ -221,11 +221,10 @@ export class Lexer {
                         return new Token('COMMA', ',');    
                     }
                     default:{
-                        throw new Error('Invalid character');
+                        throw new Error(`Invalid operator: ${this.currentChar}`);
                     }
                 }
             }
-
         }
 
         return new Token('EOF', '');

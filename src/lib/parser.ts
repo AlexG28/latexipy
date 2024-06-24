@@ -44,6 +44,10 @@ export class Parser{
         return this.currentToken.type
     }
 
+    tokenValue(): string | number{
+        return this.currentToken.value;
+    }
+
     consumeToken(tokenType: string){
         if (this.currentToken.type === tokenType){
             this.currentToken = this.lexer.getNextToken();
@@ -53,7 +57,7 @@ export class Parser{
             }
             
         } else {
-            throw new Error("Invalid Syntax");
+            throw new Error(`Unexpected token: "${this.currentToken.value}" instead of ${tokenType}`);
         }
     }
 
@@ -262,7 +266,7 @@ export class Parser{
                     break;
                 }
                 default: { 
-                   throw new Error('Somethings wrong');
+                   throw new Error(`Invalid statement keyword: ${this.tokenValue()}`);
                 } 
             }
         }
@@ -433,7 +437,7 @@ export class Parser{
                 return this.processDict();
             }
             default: {
-                throw new Error("Invalid expression");
+                throw new Error(`Invalid character in expression: ${this.currentToken.value}`);
             }
         }
     }

@@ -46,19 +46,26 @@
     let rightText = '';
 
     function convertText() {
-      const lexer = new Lexer(leftText);
-      const parser = new Parser(lexer);
-      const ast = parser.beginFunction(0);
 
-      const converter = new ASTToLatex(ast);
-      rightText = converter.convert();
+
+      try {
+        const lexer = new Lexer(leftText);
+        const parser = new Parser(lexer);
+        const ast = parser.beginFunction(0);
+  
+        const converter = new ASTToLatex(ast);
+        rightText = converter.convert();
+
+      } catch (error) {
+        if (error instanceof Error) {
+          alert(error.message)
+        }
+      }
     }  
     
     
     function handleKeyDown(event) {
       if (event.key === 'Tab') {
-        console.log("hello!!")
-
         event.preventDefault();
 
         const textarea = event.target;
