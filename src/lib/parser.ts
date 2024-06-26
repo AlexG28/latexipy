@@ -20,7 +20,6 @@ import {
 
 import { Lexer } from "$lib/lexer";
 import { type elifCondStatement } from "./nodes"
-import { parse } from "svelte/compiler";
 
 export class Parser{
     lexer: Lexer;
@@ -45,6 +44,10 @@ export class Parser{
         return this.currentToken.type
     }
 
+    tokenValue(): string | number{
+        return this.currentToken.value;
+    }
+
     consumeToken(tokenType: string){
         if (this.currentToken.type === tokenType){
             this.currentToken = this.lexer.getNextToken();
@@ -54,7 +57,7 @@ export class Parser{
             }
             
         } else {
-            throw new Error("Invalid Syntax");
+            throw new Error(`Unexpected token "${this.currentToken.value}" instead of ${tokenType} on line ${this.lexer.getLineNumber()}`);
         }
     }
 
@@ -263,7 +266,7 @@ export class Parser{
                     break;
                 }
                 default: { 
-                   throw new Error('Somethings wrong');
+                   throw new Error(`Invalid statement keyword ${this.tokenValue()} on line ${this.lexer.getLineNumber()}`);
                 } 
             }
         }
@@ -384,7 +387,8 @@ export class Parser{
             'LESSTHAN',
             'GREATERTHANOREQUAL', 
             'LESSTHANOREQUAL',
-            'EQUAL'
+            'EQUAL',
+            'IN'
         ].includes(this.currentToken.type)) {
             const token = this.currentToken;
             this.consumeToken(this.currentToken.type);
@@ -420,6 +424,12 @@ export class Parser{
             case "ID": {
                 return this.variableOrFunction();
             }
+            case "MINUS": {
+                this.consumeToken("MINUS")
+                const returnVal = new NumNode(-1 * Number(this.currentToken.value))
+                this.consumeToken("INTEGER");
+                return returnVal;
+            }
             case "LEFTBRACKET": {
                 return this.processList();
             }
@@ -427,7 +437,7 @@ export class Parser{
                 return this.processDict();
             }
             default: {
-                throw new Error("Invalid expression");
+                throw new Error(`Invalid character in expression ${this.currentToken.value} on line ${this.lexer.getLineNumber()}`);
             }
         }
     }

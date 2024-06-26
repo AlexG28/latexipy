@@ -15,6 +15,8 @@ LatexiPy supports a large chunk of the python syntax. Int, float and string lite
 ## Unsupported syntax
 Some features that are not yet implemented include:
 - operators such as `*=`, `/=` and others 
+- negative signs in front of variables. Instead of writing `-num`, you can write `-1*num`
+
 
 Additionally, some features are unsupported due to them having no equivalent in latex pseudocode 
 - object.function calls such as `list.find()`

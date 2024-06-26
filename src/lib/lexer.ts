@@ -6,12 +6,14 @@ export class Lexer {
     pos: number;
     currentChar: string | null;
     currentIndent: number;
+    lineNumber: number;
 
     constructor(text: string) {
         this.text = this.removeEmptyLines(text);
         this.pos = 0;
         this.currentChar = this.text[this.pos];
         this.currentIndent = 0;
+        this.lineNumber = 0;
     }
 
     removeEmptyLines(text: string){
@@ -52,6 +54,7 @@ export class Lexer {
             if (this.currentChar == '\n') {
                 this.advance();
                 this.countWhiteSpaces(); 
+                this.lineNumber += 1;
                 return new Token("NEWLINE", "");
             }
             
@@ -136,10 +139,18 @@ export class Lexer {
                 let operator = '';
                 
                 while(operatorChars.includes(this.currentChar)){
+                    if (operator.length == 2) {
+                        break;
+                    }
+                    if (operator.length == 1 && operator.at(-1) == "=") {
+                        if (this.currentChar != "="){
+                            break;
+                        }
+                    }
                     operator += this.currentChar;
                     this.advance();
                 }
-                
+
                 switch(operator) {
                     case '+': {
                         return new Token('PLUS', '+');    
@@ -213,14 +224,17 @@ export class Lexer {
                         return new Token('COMMA', ',');    
                     }
                     default:{
-                        throw new Error('Invalid character');
+                        throw new Error(`Invalid operator ${this.currentChar} on line ${this.getLineNumber()}`);
                     }
                 }
             }
-
         }
 
         return new Token('EOF', '');
+    }
+
+    getLineNumber(): number {
+        return this.lineNumber + 1;
     }
 
     updateIndent(): number{

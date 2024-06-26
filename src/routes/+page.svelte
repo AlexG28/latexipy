@@ -28,6 +28,7 @@
   <p>Some features that are not yet implemented include:</p>
   <ul>
       <li>operators such as <code>*=</code>, <code>/=</code> and others </li>
+      <li>negative signs in front of variables. Instead of writing <code>-num</code>, you can write <code>-1*num</code> </li>
   </ul>
   <p>Additionally, some features are unsupported due to them having no equivalent in latex pseudocode </p>
   <ul>
@@ -45,19 +46,24 @@
     let rightText = '';
 
     function convertText() {
-      const lexer = new Lexer(leftText);
-      const parser = new Parser(lexer);
-      const ast = parser.beginFunction(0);
+      try {
+        const lexer = new Lexer(leftText);
+        const parser = new Parser(lexer);
+        const ast = parser.beginFunction(0);
+  
+        const converter = new ASTToLatex(ast);
+        rightText = converter.convert();
 
-      const converter = new ASTToLatex(ast);
-      rightText = converter.convert();
+      } catch (error) {
+        if (error instanceof Error) {
+          alert(error.message)
+        }
+      }
     }  
     
     
     function handleKeyDown(event) {
       if (event.key === 'Tab') {
-        console.log("hello!!")
-
         event.preventDefault();
 
         const textarea = event.target;
